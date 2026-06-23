@@ -319,10 +319,12 @@ body { display:flex; flex-direction:column; }
 
 .battle-next-btn {
   width:100%; background:var(--hinoki); color:var(--kuro);
-  border:none; border-radius:4px; padding:13px;
-  font-size:14px; font-weight:700; cursor:pointer;
+  border:none; border-radius:4px; padding:16px;
+  font-size:15px; font-weight:700; cursor:pointer;
   font-family:var(--font-display); letter-spacing:1px;
-  margin-top:6px; display:none;
+  margin-top:8px; margin-bottom:80px; display:none;
+  position:sticky; bottom:70px; z-index:50;
+  box-shadow:0 4px 16px rgba(200,169,110,0.4);
 }
 .battle-next-btn.show { display:block; }
 
@@ -665,6 +667,12 @@ body { display:flex; flex-direction:column; }
 }
 .bottom-tab .icon { font-size:18px; }
 .bottom-tab.active { color:var(--hinoki); }
+/* ── RUBY (ふりがな) ── */
+ruby { ruby-align: center; }
+rt { font-size: 0.55em; color: var(--hinoki); letter-spacing: 0.05em; }
+.battle-cmd rt { color: var(--hai); font-size: 0.5em; }
+.battle-cmd.correct rt { color: #6DD47E; }
+.battle-cmd.wrong rt { color: #E87065; }
 </style>
 </head>
 <body>
@@ -1001,7 +1009,42 @@ function showPage(id) {
   window.scrollTo(0,0);
 }
 
-// ════ QUIZ / DQ BATTLE ════
+// ════ FURIGANA ════
+// 主要な漢字→ルビの辞書
+const RUBY_MAP = [
+  ['棟梁','とうりょう'],['言葉','ことば'],['右','みぎ'],['左','ひだり'],['上','うえ'],['下','した'],
+  ['作業','さぎょう'],['道具','どうぐ'],['木材','もくざい'],['材料','ざいりょう'],['木槌','きづち'],
+  ['金槌','かなづち'],['墨壺','すみつぼ'],['指矩','さしがね'],['墨付','すみつ'],['墨出','すみだ'],
+  ['墨線','すみせん'],['直角','ちょっかく'],['継手','つぎて'],['仕口','しぐち'],['蟻継','ありつぎ'],
+  ['相欠','あいがき'],['大入','おおい'],['柱','はしら'],['梁','はり'],['桁','けた'],['棟木','むなぎ'],
+  ['建物','たてもの'],['図面','ずめん'],['平面図','へいめんず'],['立面図','りつめんず'],['断面図','だんめんず'],
+  ['基礎','きそ'],['土台','どだい'],['足場','あしば'],['資格','しかく'],['技能','ぎのう'],['検定','けんてい'],
+  ['建築','けんちく'],['施工','せこう'],['仕上','しあ'],['養生','ようじょう'],['荒床','あらゆか'],
+  ['集成材','しゅうせいざい'],['合板','ごうばん'],['加工','かこう'],['確認','かくにん'],
+  ['手順','てじゅん'],['基準','きじゅん'],['仕事','しごと'],['挨拶','あいさつ'],
+  ['上棟','じょうとう'],['上棟式','じょうとうしき'],['安全','あんぜん'],['法規','ほうき'],
+  ['主任技術者','しゅにんぎじゅつしゃ'],['監理技術者','かんりぎじゅつしゃ'],
+  ['建築士','けんちくし'],['大工','だいく'],['職人','しょくにん'],
+  ['寸法','すんぽう'],['長さ','ながさ'],['幅','はば'],['高さ','たかさ'],['厚さ','あつさ'],
+  ['水平','すいへい'],['垂直','すいちょく'],['乾燥','かんそう'],['変形','へんけい'],
+  ['強度','きょうど'],['耐久','たいきゅう'],['接合','せつごう'],['固定','こてい'],
+  ['保護','ほご'],['防水','ぼうすい'],['断熱','だんねつ'],['遮音','しゃおん'],
+  ['釘','くぎ'],['鑿','のみ'],['鉋','かんな'],['鋸','のこ'],['鉄骨','てっこつ'],
+  ['何','なに'],['誰','だれ'],['時','とき'],['場合','ばあい'],
+];
+
+function addRuby(text) {
+  let result = text;
+  // 長い語から順に処理（部分一致防止）
+  const sorted = [...RUBY_MAP].sort((a,b) => b[0].length - a[0].length);
+  sorted.forEach(([kanji, yomi]) => {
+    // すでにrubyタグ内にある場合はスキップ
+    const regex = new RegExp(`(?<!<ruby>)${kanji}(?![^<]*<\\/ruby>)`, 'g');
+    result = result.replace(regex, `<ruby>${kanji}<rt>${yomi}</rt></ruby>`);
+  });
+  return result;
+}
+
 const MONSTERS = {
   1: { name:'🗣️ 言葉の怪人', emoji:'🗣️' },
   2: { name:'🔧 工具の鬼', emoji:'🔧' },
@@ -1163,7 +1206,7 @@ function renderBattleQuestion() {
 
   document.getElementById('b-stage-badge').innerHTML =
     `STAGE ${currentStage}<br>Q${currentQ+1}/${shuffledQuestions.length}`;
-  document.getElementById('b-q-text').textContent = q.q;
+  document.getElementById('b-q-text').innerHTML = addRuby(q.q);
   document.getElementById('b-question-win').style.display = 'block';
 
   const cmdWin = document.getElementById('b-cmd-win');
@@ -1176,7 +1219,7 @@ function renderBattleQuestion() {
   choiceIndices.forEach((origIdx, displayIdx) => {
     const btn = document.createElement('button');
     btn.className = 'battle-cmd';
-    btn.innerHTML = `<span class="cmd-letter">${['A','B','C','D'][displayIdx]}</span>${q.choices[origIdx]}`;
+    btn.innerHTML = `<span class="cmd-letter">${['A','B','C','D'][displayIdx]}</span>${addRuby(q.choices[origIdx])}`;
     btn.onclick = () => selectBattleAnswer(displayIdx, newCorrect, q.tip);
     cmdWin.appendChild(btn);
   });
@@ -1222,18 +1265,21 @@ function selectBattleAnswer(i, correctIdx, tip) {
     setMsg('❌ 不正解！ダメージを受けた！');
 
     if (quizHP<=0) {
-      document.getElementById('b-tip-text').textContent = tip;
+      document.getElementById('b-tip-text').innerHTML = addRuby(tip);
       document.getElementById('b-tip-win').classList.add('show');
       setTimeout(() => showBattleResult(false), 1200);
       return;
     }
   }
 
-  document.getElementById('b-tip-text').textContent = tip;
+  document.getElementById('b-tip-text').innerHTML = addRuby(tip);
   document.getElementById('b-tip-win').classList.add('show');
   document.getElementById('b-next-btn').classList.add('show');
   document.getElementById('b-next-btn').textContent =
     currentQ+1 >= shuffledQuestions.length ? '⚔️ 最終決戦へ ▶' : '次のバトルへ ▶';
+  setTimeout(() => {
+    document.getElementById('b-next-btn').scrollIntoView({behavior:'smooth', block:'center'});
+  }, 200);
 }
 
 function battleNext() {
