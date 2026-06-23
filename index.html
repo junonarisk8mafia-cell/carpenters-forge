@@ -673,6 +673,18 @@ rt { font-size: 0.55em; color: var(--hinoki); letter-spacing: 0.05em; }
 .battle-cmd rt { color: var(--hai); font-size: 0.5em; }
 .battle-cmd.correct rt { color: #6DD47E; }
 .battle-cmd.wrong rt { color: #E87065; }
+
+/* ── LANG TOGGLE ── */
+.lang-toggle {
+  display:flex; align-items:center; padding:0 12px;
+  border-left:1px solid var(--tan3); gap:4px; flex-shrink:0;
+}
+.lang-btn {
+  font-size:11px; font-family:var(--font-mono); padding:4px 8px;
+  border-radius:3px; border:1px solid var(--tan3);
+  background:none; color:var(--hai); cursor:pointer; transition:all 0.2s;
+}
+.lang-btn.active { background:var(--hinoki); color:var(--kuro); border-color:var(--hinoki); font-weight:700; }
 </style>
 </head>
 <body>
@@ -689,6 +701,10 @@ rt { font-size: 0.55em; color: var(--hinoki); letter-spacing: 0.05em; }
     <button class="nav-tab" onclick="showPage('blueprint')">BLUEPRINT</button>
     <button class="nav-tab" onclick="showPage('dict')">辞典</button>
     <button class="nav-tab" onclick="showPage('career')">CAREER</button>
+  </div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btn-ja" onclick="setLang('ja')">🇯🇵</button>
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')">🇬🇧</button>
   </div>
 </nav>
 
@@ -1045,6 +1061,23 @@ function addRuby(text) {
   return result;
 }
 
+// ════ LANGUAGE ════
+let currentLang = 'ja';
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('btn-ja').classList.toggle('active', lang==='ja');
+  document.getElementById('btn-en').classList.toggle('active', lang==='en');
+  initStages();
+}
+
+function getQ(q) {
+  if (currentLang==='en' && q.q_en) {
+    return { q:q.q_en, choices:q.choices_en, tip:q.tip_en, a:q.a };
+  }
+  return { q:q.q, choices:q.choices, tip:q.tip, a:q.a };
+}
+
 const MONSTERS = {
   1: { name:'🗣️ 言葉の怪人', emoji:'🗣️' },
   2: { name:'🔧 工具の鬼', emoji:'🔧' },
@@ -1069,72 +1102,112 @@ function shuffleArray(arr) {
 }
 
 const STAGES = [
-  { id:1, name:'現場の基礎日本語', desc:'挨拶・指示語・数字・方向' },
-  { id:2, name:'工具の名前', desc:'鑿・鉋・鋸・ゲンノウ・バカ棒' },
-  { id:3, name:'木材の種類', desc:'ヒノキ・スギ・集成材・サイズ隠語' },
-  { id:4, name:'墨付けと加工', desc:'墨出し・直角・サンシゴ' },
-  { id:5, name:'継手・仕口', desc:'大入れ・相欠き・蟻継ぎ' },
-  { id:6, name:'スラングマスター', desc:'ネコ・ウマ・殺す・遊び' },
-  { id:7, name:'安全・図面読み', desc:'労安法・平面図・立面図' },
-  { id:8, name:'技能検定対策', desc:'建築大工技能士2・3級' },
+  { id:1, name:'現場の基礎日本語', name_en:'Basic Site Japanese', desc:'挨拶・指示語・数字・方向', desc_en:'Greetings, directions, commands' },
+  { id:2, name:'工具の名前', name_en:'Tool Names', desc:'鑿・鉋・鋸・ゲンノウ・バカ棒', desc_en:'Chisel, plane, saw, hammer & more' },
+  { id:3, name:'木材の種類', name_en:'Wood & Materials', desc:'ヒノキ・スギ・集成材・サイズ隠語', desc_en:'Hinoki, cedar, glulam, size codes' },
+  { id:4, name:'墨付けと加工', name_en:'Marking & Processing', desc:'墨出し・直角・サンシゴ', desc_en:'Layout, right angles, 3-4-5 method' },
+  { id:5, name:'継手・仕口', name_en:'Joints & Connections', desc:'大入れ・相欠き・蟻継ぎ', desc_en:'Housing, lap, dovetail joints' },
+  { id:6, name:'スラングマスター', name_en:'Slang Master', desc:'ネコ・ウマ・殺す・遊び', desc_en:'Neko, Uma, Korosu, Asobi' },
+  { id:7, name:'安全・図面読み', name_en:'Safety & Blueprints', desc:'労安法・平面図・立面図', desc_en:'Labor law, floor plans, elevations' },
+  { id:8, name:'技能検定対策', name_en:'Skills Test Prep', desc:'建築大工技能士2・3級', desc_en:'Carpenter Skills Test Lv.2 & 3' },
 ];
 
 const QUESTIONS = {
   1: [
-    { q:'棟梁に「右に寄せろ」と言われた。何をすべきか？', a:1, choices:['左に動かす','右に動かす','上に動かす','止まる'], tip:'「右」は日本語でみぎ。右側に移動する指示です。' },
-    { q:'「もう一度やって」は英語で何と言う？', a:0, choices:['Do it again','Stop it','Come here','Be careful'], tip:'「もう一度」= Do it again / One more time' },
-    { q:'棟梁が「ちょっと待って」と言った。どうする？', a:2, choices:['作業を続ける','走る','作業を止めて待つ','帰る'], tip:'「ちょっと待って」= Wait a moment。作業を一時停止して待ちます。' },
-    { q:'「上」「下」「右」「左」のうち、Rightはどれ？', a:2, choices:['上','下','右','左'], tip:'Right=右、Left=左、Up=上、Down=下' },
-    { q:'「お疲れ様でした」はいつ使う言葉？', a:3, choices:['朝の挨拶','昼休みの挨拶','作業開始時','仕事終了時'], tip:'「お疲れ様でした」は仕事の終わりに使う挨拶。英語でGood work や Thank you for your work。' },
+    { q:'棟梁に「右に寄せろ」と言われた。何をすべきか？', a:1, choices:['左に動かす','右に動かす','上に動かす','止まる'], tip:'「右」は日本語でみぎ。右側に移動する指示です。',
+      q_en:'The foreman said "Migi ni yosero!" What should you do?', choices_en:['Move left','Move right','Move up','Stop moving'], tip_en:'"Migi" means right. Move the material or yourself to the right side.' },
+    { q:'「もう一度やって」は英語で何と言う？', a:0, choices:['Do it again','Stop it','Come here','Be careful'], tip:'「もう一度」= Do it again / One more time',
+      q_en:'What does "Mō ichido yatte" mean in English?', choices_en:['Do it again','Stop it','Come here','Be careful'], tip_en:'"Mō ichido" = one more time. The foreman wants you to repeat the action.' },
+    { q:'棟梁が「ちょっと待って」と言った。どうする？', a:2, choices:['作業を続ける','走る','作業を止めて待つ','帰る'], tip:'「ちょっと待って」= Wait a moment。作業を一時停止して待ちます。',
+      q_en:'The foreman said "Chotto matte." What do you do?', choices_en:['Keep working','Run','Stop working and wait','Go home'], tip_en:'"Chotto matte" means "Wait a moment." Stop what you are doing and wait for the next instruction.' },
+    { q:'「上」「下」「右」「左」のうち、Rightはどれ？', a:2, choices:['上','下','右','左'], tip:'Right=右、Left=左、Up=上、Down=下',
+      q_en:'Which Japanese word means "Right"?', choices_en:['Ue (上)','Shita (下)','Migi (右)','Hidari (左)'], tip_en:'Right=Migi(右), Left=Hidari(左), Up=Ue(上), Down=Shita(下). Learn these 4 directions first!' },
+    { q:'「お疲れ様でした」はいつ使う言葉？', a:3, choices:['朝の挨拶','昼休みの挨拶','作業開始時','仕事終了時'], tip:'「お疲れ様でした」は仕事の終わりに使う挨拶。英語でGood work や Thank you for your work。',
+      q_en:'When do you say "Otsukaresama deshita"?', choices_en:['Morning greeting','Lunch break greeting','When starting work','When finishing work for the day'], tip_en:'"Otsukaresama deshita" is said at the end of the workday. It means "Good work today" or "Thank you for your hard work."' },
   ],
   2: [
-    { q:'「ゲンノウ」とは何か？', a:1, choices:['鋸','金槌・木槌','鑿','鉋'], tip:'ゲンノウ（玄翁）は木槌・金槌の総称。ハンマーのことです。' },
-    { q:'「バカ棒」は何に使う道具か？', a:2, choices:['材料を切る','穴を開ける','長さ・水平を確認する仮の基準棒','釘を打つ'], tip:'バカ棒は長さや水平を確認するために現場で使う仮の基準棒。基本中の基本ツール。' },
-    { q:'「墨壺（すみつぼ）」の用途は？', a:0, choices:['木材に直線を引く','木材を切る','穴を開ける','水平を測る'], tip:'墨壺は墨汁を含んだ糸で木材に直線（墨線）を引くための道具。墨付け作業の必需品。' },
-    { q:'「鑿（のみ）」は何に使う工具か？', a:3, choices:['木材を切る','釘を打つ','穴を測る','木材を彫り込む'], tip:'鑿は木材に溝や穴を彫り込むための工具。継手・仕口の加工に欠かせない。' },
-    { q:'「指矩（さしがね）」の主な用途は？', a:1, choices:['木材を切る','角度や長さを測る','釘を打つ','穴を開ける'], tip:'指矩はL字型の金属製定規。直角確認・長さ測定・墨付けなど万能な道具。' },
+    { q:'「ゲンノウ」とは何か？', a:1, choices:['鋸','金槌・木槌','鑿','鉋'], tip:'ゲンノウ（玄翁）は木槌・金槌の総称。ハンマーのことです。',
+      q_en:'What is a "Gennō" (玄翁)?', choices_en:['A saw','A hammer / mallet','A chisel','A hand plane'], tip_en:'Gennō is the Japanese term for hammer or mallet. If someone says "Gennō de uchi konde," they want you to hammer it in.' },
+    { q:'「バカ棒」は何に使う道具か？', a:2, choices:['材料を切る','穴を開ける','長さ・水平を確認する仮の基準棒','釘を打つ'], tip:'バカ棒は長さや水平を確認するために現場で使う仮の基準棒。基本中の基本ツール。',
+      q_en:'What is a "Baka-bō" used for?', choices_en:['Cutting wood','Drilling holes','A temporary reference stick for checking length and level','Hammering nails'], tip_en:'Baka-bō literally means "idiot stick." It is a simple reference rod made on-site to check measurements and level — very useful!' },
+    { q:'「墨壺（すみつぼ）」の用途は？', a:0, choices:['木材に直線を引く','木材を切る','穴を開ける','水平を測る'], tip:'墨壺は墨汁を含んだ糸で木材に直線（墨線）を引くための道具。墨付け作業の必需品。',
+      q_en:'What is a "Sumitsubo" (墨壺) used for?', choices_en:['Drawing straight ink lines on wood','Cutting wood','Drilling holes','Measuring water level'], tip_en:'Sumitsubo is an ink-line tool. The inked string snaps against the wood to mark a straight line. Essential for sumitsuke (layout marking).' },
+    { q:'「鑿（のみ）」は何に使う工具か？', a:3, choices:['木材を切る','釘を打つ','穴を測る','木材を彫り込む'], tip:'鑿は木材に溝や穴を彫り込むための工具。継手・仕口の加工に欠かせない。',
+      q_en:'What is a "Nomi" (鑿) used for?', choices_en:['Cutting wood','Driving nails','Measuring holes','Chiseling grooves and mortises into wood'], tip_en:'Nomi is a chisel. It is used to carve joints (継手・仕口) into timber. Very important for traditional Japanese joinery.' },
+    { q:'「指矩（さしがね）」の主な用途は？', a:1, choices:['木材を切る','角度や長さを測る','釘を打つ','穴を開ける'], tip:'指矩はL字型の金属製定規。直角確認・長さ測定・墨付けなど万能な道具。',
+      q_en:'What is a "Sashigane" (指矩) mainly used for?', choices_en:['Cutting wood','Measuring angles and lengths','Driving nails','Drilling holes'], tip_en:'Sashigane is an L-shaped metal ruler. It is used for checking right angles, measuring lengths, and layout marking — a must-have tool.' },
   ],
   3: [
-    { q:'「インゴ」とは何mmのことか？', a:2, choices:['30mm','36mm','45mm','60mm'], tip:'インゴ＝一寸五分＝45mm。尺貫法の略語で「インゴ角」は45mm角材のこと。' },
-    { q:'ヒノキの特徴として正しいのは？', a:0, choices:['耐久性・耐湿性が高く香りが良い','非常に重く水に沈む','すぐに腐る','色が黒い'], tip:'ヒノキは耐久性・耐湿性に優れ独特の香りがある。神社仏閣にも使われる高級材。' },
-    { q:'「集成材」とは何か？', a:1, choices:['一本の丸太から切り出した材料','小さな木材を接着して作った合板','竹を原料にした材料','コンクリートの一種'], tip:'集成材は小断面の木材を繊維方向に並べて接着した材料。強度が安定している。' },
-    { q:'「ヌキ」は何mm×何mmの材料か？', a:3, choices:['30×90mm','20×45mm','45×90mm','13×90mm'], tip:'ヌキ（貫）は13×90mmの薄い横材。壁の下地などに使われる。「ヌキ入れろ」と言われたら壁下地の指示。' },
-    { q:'木材が乾燥して反り・曲がりが生じることを大工は何と言う？', a:0, choices:['狂う（くるう）','遊ぶ','殺す','養生する'], tip:'木材の変形を「狂う」と言う。「材が狂った」は乾燥による反り・ねじれの状態。' },
+    { q:'「インゴ」とは何mmのことか？', a:2, choices:['30mm','36mm','45mm','60mm'], tip:'インゴ＝一寸五分＝45mm。尺貫法の略語で「インゴ角」は45mm角材のこと。',
+      q_en:'What size is "Ingo" in millimeters?', choices_en:['30mm','36mm','45mm','60mm'], tip_en:'"Ingo" = 1.5 sun = 45mm. It comes from the old Japanese shakkanhō measurement system. "Ingo-kaku" means a 45mm square timber.' },
+    { q:'ヒノキの特徴として正しいのは？', a:0, choices:['耐久性・耐湿性が高く香りが良い','非常に重く水に沈む','すぐに腐る','色が黒い'], tip:'ヒノキは耐久性・耐湿性に優れ独特の香りがある。神社仏閣にも使われる高級材。',
+      q_en:'Which description of Hinoki (Japanese cypress) is correct?', choices_en:['High durability, moisture-resistance, and pleasant fragrance','Very heavy and sinks in water','Rots quickly','Dark black in color'], tip_en:'Hinoki is a premium timber used in shrines and temples. It has excellent durability, moisture resistance, and a characteristic pleasant scent.' },
+    { q:'「集成材」とは何か？', a:1, choices:['一本の丸太から切り出した材料','小さな木材を接着して作った合板','竹を原料にした材料','コンクリートの一種'], tip:'集成材は小断面の木材を繊維方向に並べて接着した材料。強度が安定している。',
+      q_en:'What is "Shūseizai" (集成材)?', choices_en:['Timber cut from a single log','Glued laminated timber (glulam) made from bonded wood pieces','Bamboo-based material','A type of concrete'], tip_en:'Shūseizai is glued laminated timber (glulam). Small wood pieces are glued together in the grain direction, giving stable and predictable strength.' },
+    { q:'「ヌキ」は何mm×何mmの材料か？', a:3, choices:['30×90mm','20×45mm','45×90mm','13×90mm'], tip:'ヌキ（貫）は13×90mmの薄い横材。壁の下地などに使われる。「ヌキ入れろ」と言われたら壁下地の指示。',
+      q_en:'What are the dimensions of "Nuki" (貫) timber?', choices_en:['30×90mm','20×45mm','45×90mm','13×90mm'], tip_en:'Nuki is a thin horizontal member (13×90mm) used in wall framing. "Nuki ire ro" means install the nuki — a common instruction on-site.' },
+    { q:'木材が乾燥して反り・曲がりが生じることを大工は何と言う？', a:0, choices:['狂う（くるう）','遊ぶ','殺す','養生する'], tip:'木材の変形を「狂う」と言う。「材が狂った」は乾燥による反り・ねじれの状態。',
+      q_en:'What do carpenters call it when timber warps or bends due to drying?', choices_en:['"Kuruu" — to go crazy / warp','"Asobu" — to play / have slack','"Korosu" — to kill / disable','"Yōjō suru" — to protect'], tip_en:'"Kuruu" (狂う) means the timber has warped, twisted, or bowed. "Zai ga kurutta" = the material has warped. A key quality-check term.' },
   ],
   4: [
-    { q:'「墨出し（すみだし）」とは何をする作業か？', a:2, choices:['墨を洗い流す作業','墨壺に墨を補充する作業','施工位置を床や壁に基準線で示す作業','木材に色を塗る作業'], tip:'墨出しは墨壺を使い、施工する位置を正確に線で示す作業。建築工事の最重要工程のひとつ。' },
-    { q:'「サンシゴ」（三四五）とは何に使う手法か？', a:1, choices:['木材のサイズを言う隠語','3:4:5の比率で直角を出す方法','3種類の材料を使う技法','4人で作業する方法'], tip:'3:4:5の三辺比率でできる直角三角形を使って、現場で簡単・正確に直角を出す方法。ピタゴラスの定理の実用版。' },
-    { q:'1寸（いっすん）は何mmか？', a:0, choices:['30.3mm','25mm','36mm','45mm'], tip:'1寸＝約30.3mm。1尺＝10寸＝303mm。大工は今でも尺貫法を日常的に使う。' },
-    { q:'「養生（ようじょう）する」とは何をすることか？', a:3, choices:['木材を乾燥させる','材料を切る','休憩をとる','資材や仕上げ面をシートで保護する'], tip:'養生とは完成した仕上げ面や材料を汚れ・傷から守るためにシート等で保護すること。「養生しといて」は必須指示。' },
-    { q:'「荒床（あらゆか）」とは何か？', a:1, choices:['汚れた床','仕上げ材を貼る前の床下地','外の地面','古い建物の床'], tip:'荒床は仕上げ材（フローリング等）を貼る前の床の下地材。仕上げ工程の前段階。' },
+    { q:'「墨出し（すみだし）」とは何をする作業か？', a:2, choices:['墨を洗い流す作業','墨壺に墨を補充する作業','施工位置を床や壁に基準線で示す作業','木材に色を塗る作業'], tip:'墨出しは墨壺を使い、施工する位置を正確に線で示す作業。建築工事の最重要工程のひとつ。',
+      q_en:'What is "Sumidashi" (墨出し)?', choices_en:['Washing off ink marks','Refilling the ink in the sumitsubo','Marking construction positions on floors and walls with reference lines','Painting wood with color'], tip_en:'Sumidashi is layout marking — using ink lines to show exactly where structural elements will go. It is one of the most critical steps in construction.' },
+    { q:'「サンシゴ」（三四五）とは何に使う手法か？', a:1, choices:['木材のサイズを言う隠語','3:4:5の比率で直角を出す方法','3種類の材料を使う技法','4人で作業する方法'], tip:'3:4:5の三辺比率でできる直角三角形を使って、現場で簡単・正確に直角を出す方法。ピタゴラスの定理の実用版。',
+      q_en:'What is the "San-shi-go" (3-4-5) method used for?', choices_en:['A code word for timber sizes','Creating a perfect right angle using 3:4:5 ratio','A technique using 3 types of materials','A 4-person work method'], tip_en:'San-shi-go uses the 3:4:5 Pythagorean ratio to create a perfect right angle on-site. Measure 3 on one side, 4 on the other — the diagonal must be 5.' },
+    { q:'1寸（いっすん）は何mmか？', a:0, choices:['30.3mm','25mm','36mm','45mm'], tip:'1寸＝約30.3mm。1尺＝10寸＝303mm。大工は今でも尺貫法を日常的に使う。',
+      q_en:'How many millimeters is 1 sun (一寸)?', choices_en:['30.3mm','25mm','36mm','45mm'], tip_en:'1 sun = approx. 30.3mm. 1 shaku = 10 sun = 303mm. Japanese carpenters still use the shakkanhō system daily on-site.' },
+    { q:'「養生（ようじょう）する」とは何をすることか？', a:3, choices:['木材を乾燥させる','材料を切る','休憩をとる','資材や仕上げ面をシートで保護する'], tip:'養生とは完成した仕上げ面や材料を汚れ・傷から守るためにシート等で保護すること。「養生しといて」は必須指示。',
+      q_en:'What does "yōjō suru" (養生する) mean on a construction site?', choices_en:['Drying timber','Cutting materials','Taking a rest','Covering finished surfaces or materials with protective sheets'], tip_en:'"Yōjō" means protection — covering floors, walls, or materials with sheets to prevent damage and dirt. "Yōjō shite" is a very common instruction.' },
+    { q:'「荒床（あらゆか）」とは何か？', a:1, choices:['汚れた床','仕上げ材を貼る前の床下地','外の地面','古い建物の床'], tip:'荒床は仕上げ材（フローリング等）を貼る前の床の下地材。仕上げ工程の前段階。',
+      q_en:'What is "Arayuka" (荒床)?', choices_en:['A dirty floor','The subfloor layer before finish flooring is installed','Outdoor ground','The floor of an old building'], tip_en:'Arayuka is the rough subfloor — the structural base installed before the finish floor (like hardwood or tiles) goes on top.' },
   ],
   5: [
-    { q:'「継手（つぎて）」とは何か？', a:0, choices:['材木を長さ方向につなぐ接合部','材木を角度をつけて接合する部分','金属の接合部','コンクリートのつなぎ目'], tip:'継手は木材を長さ方向につなぐ接合法。蟻継ぎ・鎌継ぎなど多くの種類がある。' },
-    { q:'「仕口（しぐち）」とは何か？', a:2, choices:['仕事の口（求人）','継手の一種','材木をT字・L字に組む接合部','工具の名前'], tip:'仕口は材木を直角などの角度で組み合わせる接合部。柱と梁の接合などに使う。継手との違いに注意。' },
-    { q:'「蟻継ぎ（ありつぎ）」の「蟻」は何のことか？', a:1, choices:['昆虫のアリ','蟻の巣のような台形の形をした接合部','蟻が木を食う意味','蟻酸を使う処理'], tip:'蟻継ぎの「蟻」は台形（アリ形）の凸凹でかみ合う接合形状のこと。引き抜けない強い接合が特徴。' },
-    { q:'「大入れ（おおいれ）」とは？', a:3, choices:['材料を大量に入れること','お金を多く払うこと','材料の大きなサイズ','材料をそのままの形で彫り込んで接合する仕口'], tip:'大入れは角材や変形した材をそのままの断面で相手の材に彫り込んで取り付ける仕口の技法。' },
-    { q:'「相欠き（あいがき）」とは何か？', a:0, choices:['互いに半分ずつ欠き込んで重ね合わせる接合法','完全に切り離す切断法','材料を欠点として廃棄すること','二つの材料を向き合わせること'], tip:'相欠きは2つの材を互いに半分ずつ欠き込んで組み合わせる接合法。「相欠き継ぎ」とも言う。' },
+    { q:'「継手（つぎて）」とは何か？', a:0, choices:['材木を長さ方向につなぐ接合部','材木を角度をつけて接合する部分','金属の接合部','コンクリートのつなぎ目'], tip:'継手は木材を長さ方向につなぐ接合法。蟻継ぎ・鎌継ぎなど多くの種類がある。',
+      q_en:'What is a "Tsugite" (継手)?', choices_en:['A joint that connects timber end-to-end in length','A joint that connects timber at an angle','A metal connection','A concrete joint'], tip_en:'Tsugite is a splice joint — timber connected end-to-end to extend its length. Dovetail and sickle joints are common types.' },
+    { q:'「仕口（しぐち）」とは何か？', a:2, choices:['仕事の口（求人）','継手の一種','材木をT字・L字に組む接合部','工具の名前'], tip:'仕口は材木を直角などの角度で組み合わせる接合部。柱と梁の接合などに使う。継手との違いに注意。',
+      q_en:'What is a "Shiguchi" (仕口)?', choices_en:['A job opening','A type of tsugite splice joint','A joint connecting timber at T or L angles (like post to beam)','A tool name'], tip_en:'Shiguchi is a connecting joint where timber meets at right angles — like a post-to-beam connection. Different from tsugite, which joins end-to-end.' },
+    { q:'「蟻継ぎ（ありつぎ）」の「蟻」は何のことか？', a:1, choices:['昆虫のアリ','蟻の巣のような台形の形をした接合部','蟻酸を使う処理','蟻が木を食う意味'], tip:'蟻継ぎの「蟻」は台形（アリ形）の凸凹でかみ合う接合形状のこと。引き抜けない強い接合が特徴。',
+      q_en:'In "Aritugi" (dovetail joint), what does "ari" refer to?', choices_en:['The insect (ant)','A trapezoidal shape that locks together like a dovetail','A chemical treatment using formic acid','Ants eating the wood'], tip_en:'"Ari" refers to the trapezoidal dovetail shape. The interlocking form prevents the joint from being pulled apart — very strong.' },
+    { q:'「大入れ（おおいれ）」とは？', a:3, choices:['材料を大量に入れること','お金を多く払うこと','材料の大きなサイズ','材料をそのままの形で彫り込んで接合する仕口'], tip:'大入れは角材や変形した材をそのままの断面で相手の材に彫り込んで取り付ける仕口の技法。',
+      q_en:'What is "Ōire" (大入れ)?', choices_en:['Putting in a large amount of material','Paying a lot of money','A large size of material','A housing joint where timber is embedded with its full cross-section into another piece'], tip_en:'Ōire is a full housing joint — one timber is embedded into another keeping its full cross-section shape. Common for connecting beams to posts.' },
+    { q:'「相欠き（あいがき）」とは何か？', a:0, choices:['互いに半分ずつ欠き込んで重ね合わせる接合法','完全に切り離す切断法','材料を欠点として廃棄すること','二つの材料を向き合わせること'], tip:'相欠きは2つの材を互いに半分ずつ欠き込んで組み合わせる接合法。「相欠き継ぎ」とも言う。',
+      q_en:'What is "Aigaki" (相欠き)?', choices_en:['A half-lap joint where both pieces are notched halfway and overlapped','Cutting timber completely apart','Discarding material as defective','Placing two pieces facing each other'], tip_en:'Aigaki is a half-lap joint. Both pieces are cut halfway through and overlapped. Also called aigaki-tsugi. Simple and strong.' },
   ],
   6: [
-    { q:'「今日は遊びだ」と棟梁が言った。何を意味するか？', a:2, choices:['今日は遊んで良い','材料に余裕を持たせる作業がある','今日は仕事がなく休みだ','遊び場で作業する'], tip:'「遊び」には複数の意味がある。材料の「余裕・ガタ」の意味と、職人言葉で「仕事がない・休み」の意味がある。文脈で判断！' },
-    { q:'棟梁が「ネコで運べ」と言った。何を使うか？', a:1, choices:['本物の猫','手押し一輪車','猫型の容器','ネコという名前の人'], tip:'「ネコ（猫車）」は手押しの一輪車のこと。「ネコで運べ」は一輪車を使って運搬する指示。' },
-    { q:'「ウマ持ってきて」と言われた。何を持ってくるか？', a:0, choices:['作業台・馬脚立','本物の馬','馬型の工具','ウマという名前の材料'], tip:'「ウマ（馬）」は作業台や馬脚立のこと。現場での高所作業の足場として使う。' },
-    { q:'「その配線、殺しといて」と言われた。どうする？', a:3, choices:['配線を切断して捨てる','配線を洗浄する','配線を新しくする','配線を使えない状態にしておく'], tip:'「殺す」は使用不可の状態にすること。「配線を殺す」は通電しない・使えない状態にする現場用語。' },
-    { q:'「納まりが悪い」とはどういう意味か？', a:1, choices:['収納スペースが少ない','仕上がりの接合や見た目が悪い','支払いが済んでいない','材料が不足している'], tip:'「納まり」は建築の各部材の取り合いや仕上がりの総合的な出来栄えのこと。「納まりが悪い」＝仕上がりが雑・設計通りでない。' },
+    { q:'「今日は遊びだ」と棟梁が言った。何を意味するか？', a:2, choices:['今日は遊んで良い','材料に余裕を持たせる作業がある','今日は仕事がなく休みだ','遊び場で作業する'], tip:'「遊び」には複数の意味がある。材料の「余裕・ガタ」の意味と、職人言葉で「仕事がない・休み」の意味がある。文脈で判断！',
+      q_en:'The foreman said "Kyō wa asobi da." What does it mean?', choices_en:['You can play freely today','There is work to add slack/clearance to materials','No work today — it is a day off','Work at a playground'], tip_en:'"Asobi" has two meanings: clearance/slack in materials, OR no work / day off. Context is everything! "Kyō wa asobi" = day off.' },
+    { q:'棟梁が「ネコで運べ」と言った。何を使うか？', a:1, choices:['本物の猫','手押し一輪車','猫型の容器','ネコという名前の人'], tip:'「ネコ（猫車）」は手押しの一輪車のこと。「ネコで運べ」は一輪車を使って運搬する指示。',
+      q_en:'The foreman said "Neko de hakobe." What do you use?', choices_en:['A real cat','A wheelbarrow','A cat-shaped container','A person named Neko'], tip_en:'"Neko" (猫 = cat) is slang for a wheelbarrow on construction sites. "Neko de hakobe" = carry it with the wheelbarrow.' },
+    { q:'「ウマ持ってきて」と言われた。何を持ってくるか？', a:0, choices:['作業台・馬脚立','本物の馬','馬型の工具','ウマという名前の材料'], tip:'「ウマ（馬）」は作業台や馬脚立のこと。現場での高所作業の足場として使う。',
+      q_en:'The foreman said "Uma motte kite." What do you bring?', choices_en:['A sawhorse or work stand','A real horse','A horse-shaped tool','Material called Uma'], tip_en:'"Uma" (馬 = horse) is slang for a sawhorse or work stand. Used as a platform for cutting or working at height.' },
+    { q:'「その配線、殺しといて」と言われた。どうする？', a:3, choices:['配線を切断して捨てる','配線を洗浄する','配線を新しくする','配線を使えない状態にしておく'], tip:'「殺す」は使用不可の状態にすること。「配線を殺す」は通電しない・使えない状態にする現場用語。',
+      q_en:'Someone said "Sono haisen, koroshite." What should you do?', choices_en:['Cut and throw away the wiring','Clean the wiring','Replace with new wiring','Make the wiring inactive / non-functional'], tip_en:'"Korosu" (殺す = to kill) on-site means to disable or deactivate something. "Haisen wo korosu" = disconnect/disable the wiring. Very common term!' },
+    { q:'「納まりが悪い」とはどういう意味か？', a:1, choices:['収納スペースが少ない','仕上がりの接合や見た目が悪い','支払いが済んでいない','材料が不足している'], tip:'「納まり」は建築の各部材の取り合いや仕上がりの総合的な出来栄えのこと。「納まりが悪い」＝仕上がりが雑・設計通りでない。',
+      q_en:'What does "Osamari ga warui" mean?', choices_en:['Not enough storage space','The fit, joints, or finish quality is poor','Payment has not been made','Not enough materials'], tip_en:'"Osamari" refers to how well all parts fit together and look when finished. "Osamari ga warui" = poor fit or sloppy finish. A critical quality term.' },
   ],
   7: [
-    { q:'足場を組む際に必要な資格は？', a:0, choices:['足場の組立て等作業主任者','一級建築士','建築大工技能士1級','特定技能2号'], tip:'高さ5m以上の足場組立・解体・変更には「足場の組立て等作業主任者」の資格が必要。労働安全衛生法による。' },
-    { q:'建築図面で「GL」とは何を意味するか？', a:2, choices:['Green Line（緑線）','Gross Load（総荷重）','Ground Level（地盤面）','Glass Layer（ガラス層）'], tip:'GLはGround Level（地盤面・地面の高さ）の略。建物の高さを計測する基準点。' },
-    { q:'「上棟式」はいつ行う儀式か？', a:1, choices:['着工前','棟木（最も高い位置の構造材）を収めた時','完成後の引き渡し時','基礎工事完了時'], tip:'上棟式は棟木（棟木）を収め、建物の骨格が完成した時点で行う。工事の安全と建物への感謝を祈る儀式。' },
-    { q:'建築図面の「平面図」とは何を示す図か？', a:0, choices:['建物を真上から見た水平断面図','建物を横から見た図','基礎の断面図','屋根の形状図'], tip:'平面図は床から約1.2mの高さで水平に切った断面を真上から見た図。部屋の配置・寸法がわかる。' },
-    { q:'「主任技術者」になるために必要なのは？', a:3, choices:['高校卒業','10年の実務経験のみ','日本国籍','施工管理技士または建築士の資格'], tip:'主任技術者・監理技術者には施工管理技士や建築士などの国家資格が必要。建設業法により工事現場への配置が義務付けられている。' },
+    { q:'足場を組む際に必要な資格は？', a:0, choices:['足場の組立て等作業主任者','一級建築士','建築大工技能士1級','特定技能2号'], tip:'高さ5m以上の足場組立・解体・変更には「足場の組立て等作業主任者」の資格が必要。労働安全衛生法による。',
+      q_en:'What license is required to assemble scaffolding on a construction site?', choices_en:['Scaffolding Assembly Work Supervisor license','1st-class Architect license','1st-class Carpenter Skills certificate','Specified Skilled Worker Type 2'], tip_en:'For scaffolding over 5m, a licensed Scaffolding Assembly Work Supervisor must be present. Required under the Industrial Safety and Health Act.' },
+    { q:'建築図面で「GL」とは何を意味するか？', a:2, choices:['Green Line（緑線）','Gross Load（総荷重）','Ground Level（地盤面）','Glass Layer（ガラス層）'], tip:'GLはGround Level（地盤面・地面の高さ）の略。建物の高さを計測する基準点。',
+      q_en:'On a building plan, what does "GL" stand for?', choices_en:['Green Line','Gross Load','Ground Level','Glass Layer'], tip_en:'GL = Ground Level. It marks the height of the ground surface and serves as the reference point for measuring building heights.' },
+    { q:'「上棟式」はいつ行う儀式か？', a:1, choices:['着工前','棟木（最も高い位置の構造材）を収めた時','完成後の引き渡し時','基礎工事完了時'], tip:'上棟式は棟木（棟木）を収め、建物の骨格が完成した時点で行う。工事の安全と建物への感謝を祈る儀式。',
+      q_en:'When is the "Jōtō-shiki" (topping-out ceremony) held?', choices_en:['Before construction starts','When the ridgepole (highest structural member) is set in place','After completion at handover','After foundation work is finished'], tip_en:'Jōtō-shiki celebrates when the ridgepole is set — the building skeleton is complete. It is a prayer for construction safety and gratitude for the building.' },
+    { q:'建築図面の「平面図」とは何を示す図か？', a:0, choices:['建物を真上から見た水平断面図','建物を横から見た図','基礎の断面図','屋根の形状図'], tip:'平面図は床から約1.2mの高さで水平に切った断面を真上から見た図。部屋の配置・寸法がわかる。',
+      q_en:'What does a "Heimen-zu" (平面図 / floor plan) show?', choices_en:['A horizontal cross-section viewed from above (like a bird\'s eye view)','A view of the building from the side','A cross-section of the foundation','The shape of the roof'], tip_en:'Heimen-zu is a floor plan — a horizontal cut at about 1.2m height, viewed from above. It shows room layout and dimensions.' },
+    { q:'「主任技術者」になるために必要なのは？', a:3, choices:['高校卒業','10年の実務経験のみ','日本国籍','施工管理技士または建築士の資格'], tip:'主任技術者・監理技術者には施工管理技士や建築士などの国家資格が必要。建設業法により工事現場への配置が義務付けられている。',
+      q_en:'What is required to become a "Shunin Gijutsusha" (site supervisor)?', choices_en:['High school graduation','10 years of work experience only','Japanese citizenship','Construction Management Engineer or Architect license'], tip_en:'A Construction Management Engineer or Architect national license is required. Construction law mandates a Shunin Gijutsusha be assigned to every construction site.' },
   ],
   8: [
-    { q:'建築大工技能士3級の受験資格は？', a:0, choices:['実務経験なしで受験可能（学生も可）','実務経験2年以上','実務経験7年以上','一級建築士取得後'], tip:'3級は原則として実務経験不問。技能実習生や学生でも受験できる入門資格。' },
-    { q:'建築大工技能士2級の実技試験で問われる技術は？', a:1, choices:['コンクリートの打設','木造在来軸組構法の墨付け・加工・組立て','鉄骨の溶接','外壁塗装'], tip:'2級実技は木造在来軸組工法での墨付け・加工・組立て。試験時間は5時間30分程度。' },
-    { q:'「建築施工管理技士2級」を取得すると何になれるか？', a:2, choices:['一級建築士','棟梁','主任技術者','監理技術者'], tip:'2級建築施工管理技士を取得すると「主任技術者」になれる。一般建設業の現場を管理する資格。' },
-    { q:'「特定技能2号」の建設分野での大きなメリットは？', a:0, choices:['在留期間の上限がなく家族帯同も可能','給料が2倍になる','日本国籍が取れる','資格試験が免除される'], tip:'特定技能2号は在留期間の制限がなく、家族の帯同も認められる。外国人技能者の最重要目標の一つ。' },
-    { q:'「APECアーキテクト」になるための基本条件は？', a:1, choices:['二級建築士＋実務5年','一級建築士＋実務3年以上の責任ある経験','木造建築士＋実務10年','施工管理技士1級のみ'], tip:'APECアーキテクトは一級建築士取得後、3年以上の責任ある実務経験が必要。APEC域内で建築家として認められる国際資格。' },
+    { q:'建築大工技能士3級の受験資格は？', a:0, choices:['実務経験なしで受験可能（学生も可）','実務経験2年以上','実務経験7年以上','一級建築士取得後'], tip:'3級は原則として実務経験不問。技能実習生や学生でも受験できる入門資格。',
+      q_en:'Who can take the Carpenter Skills Test Level 3?', choices_en:['Anyone — no work experience required (students too)','2+ years of work experience','7+ years of work experience','After getting 1st-class architect license'], tip_en:'Level 3 generally has no work experience requirement. Trainees and students can take it — it is the entry-level qualification.' },
+    { q:'建築大工技能士2級の実技試験で問われる技術は？', a:1, choices:['コンクリートの打設','木造在来軸組構法の墨付け・加工・組立て','鉄骨の溶接','外壁塗装'], tip:'2級実技は木造在来軸組工法での墨付け・加工・組立て。試験時間は5時間30分程度。',
+      q_en:'What skill is tested in the Level 2 practical exam?', choices_en:['Concrete pouring','Marking, cutting & assembling wood-frame (Zairai) structure','Steel welding','Exterior wall painting'], tip_en:'The Level 2 practical test covers marking (sumitsuke), cutting and assembling a traditional timber frame. Exam time is about 5.5 hours.' },
+    { q:'「建築施工管理技士2級」を取得すると何になれるか？', a:2, choices:['一級建築士','棟梁','主任技術者','監理技術者'], tip:'2級建築施工管理技士を取得すると「主任技術者」になれる。一般建設業の現場を管理する資格。',
+      q_en:'What role can you fill after getting the 2nd-class Construction Management Engineer license?', choices_en:['1st-class architect','Master carpenter (Tōryō)','Site supervisor (Shunin Gijutsusha)','Senior site manager (Kanri Gijutsusha)'], tip_en:'The 2nd-class Construction Management Engineer license allows you to work as a Shunin Gijutsusha (site supervisor) on general construction sites.' },
+    { q:'「特定技能2号」の建設分野での大きなメリットは？', a:0, choices:['在留期間の上限がなく家族帯同も可能','給料が2倍になる','日本国籍が取れる','資格試験が免除される'], tip:'特定技能2号は在留期間の制限がなく、家族の帯同も認められる。外国人技能者の最重要目標の一つ。',
+      q_en:'What is the biggest benefit of Specified Skilled Worker Type 2 (Tokutei Ginou 2) in construction?', choices_en:['No limit on stay period AND family members can come to Japan','Salary doubles automatically','You can get Japanese citizenship','Exam requirements are waived'], tip_en:'Type 2 has no maximum stay period and allows family members to accompany you. This is a major goal for foreign skilled workers in Japan.' },
+    { q:'「APECアーキテクト」になるための基本条件は？', a:1, choices:['二級建築士＋実務5年','一級建築士＋実務3年以上の責任ある経験','木造建築士＋実務10年','施工管理技士1級のみ'], tip:'APECアーキテクトは一級建築士取得後、3年以上の責任ある実務経験が必要。APEC域内で建築家として認められる国際資格。',
+      q_en:'What are the basic requirements to become an APEC Architect?', choices_en:['2nd-class architect + 5 years experience','1st-class architect + 3+ years of responsible practice','Wood-frame architect + 10 years','Only 1st-class Construction Management Engineer'], tip_en:'An APEC Architect requires a 1st-class architect license plus 3 or more years of responsible professional experience. It is recognized across the APEC region.' },
   ],
 };
 
@@ -1148,11 +1221,13 @@ function initStages() {
     const btn = document.createElement('button');
     btn.className = 'stage-btn';
     const m = MONSTERS[s.id];
+    const name = currentLang==='en' ? (s.name_en||s.name) : s.name;
+    const desc = currentLang==='en' ? (s.desc_en||s.desc) : s.desc;
     btn.innerHTML = `
       <div class="stage-num-badge">${m ? m.emoji : s.id}</div>
       <div class="stage-info">
-        <h3>${s.name}</h3>
-        <p>${s.desc}</p>
+        <h3>${name}</h3>
+        <p>${desc}</p>
       </div>
       <span class="stage-clear">${QUESTIONS[s.id] ? '▶' : '🔒'}</span>
     `;
@@ -1191,7 +1266,7 @@ function startStage(id) {
   document.getElementById('b-cmd-win').style.display = 'none';
   document.getElementById('b-question-win').style.display = 'none';
 
-  setMsg(`${m.name} が現れた！`);
+  setMsg(currentLang==='en' ? `${m.name} appeared!` : `${m.name} が現れた！`);
   setTimeout(() => renderBattleQuestion(), 1200);
 }
 
@@ -1201,12 +1276,14 @@ function setMsg(text) {
 
 function renderBattleQuestion() {
   if (currentQ >= shuffledQuestions.length) { showBattleResult(true); return; }
-  const q = shuffledQuestions[currentQ];
+  const raw = shuffledQuestions[currentQ];
+  const q = getQ(raw); // 言語切り替え対応
   answered = false;
 
   document.getElementById('b-stage-badge').innerHTML =
     `STAGE ${currentStage}<br>Q${currentQ+1}/${shuffledQuestions.length}`;
-  document.getElementById('b-q-text').innerHTML = addRuby(q.q);
+  // 英語モードではrubyなし
+  document.getElementById('b-q-text').innerHTML = currentLang==='ja' ? addRuby(q.q) : q.q;
   document.getElementById('b-question-win').style.display = 'block';
 
   const cmdWin = document.getElementById('b-cmd-win');
@@ -1219,14 +1296,15 @@ function renderBattleQuestion() {
   choiceIndices.forEach((origIdx, displayIdx) => {
     const btn = document.createElement('button');
     btn.className = 'battle-cmd';
-    btn.innerHTML = `<span class="cmd-letter">${['A','B','C','D'][displayIdx]}</span>${addRuby(q.choices[origIdx])}`;
+    const choiceText = currentLang==='ja' ? addRuby(q.choices[origIdx]) : q.choices[origIdx];
+    btn.innerHTML = `<span class="cmd-letter">${['A','B','C','D'][displayIdx]}</span>${choiceText}`;
     btn.onclick = () => selectBattleAnswer(displayIdx, newCorrect, q.tip);
     cmdWin.appendChild(btn);
   });
 
   document.getElementById('b-tip-win').classList.remove('show');
   document.getElementById('b-next-btn').classList.remove('show');
-  setMsg('コマンドを選べ！');
+  setMsg(currentLang==='en' ? 'Choose your answer!' : 'コマンドを選べ！');
 }
 
 function selectBattleAnswer(i, correctIdx, tip) {
@@ -1251,7 +1329,7 @@ function selectBattleAnswer(i, correctIdx, tip) {
     const mon = document.getElementById('b-monster');
     mon.className = 'battle-monster shake';
     setTimeout(() => mon.className = 'battle-monster', 500);
-    setMsg('✅ 正解！ダメージを与えた！');
+    setMsg(currentLang==='en' ? '✅ Correct! You dealt damage!' : '✅ 正解！ダメージを与えた！');
   } else {
     btns[i].classList.add('wrong');
     quizHP--;
@@ -1262,7 +1340,7 @@ function selectBattleAnswer(i, correctIdx, tip) {
     const miss = document.getElementById('b-miss');
     miss.className = 'miss-popup show';
     setTimeout(() => miss.className = 'miss-popup', 900);
-    setMsg('❌ 不正解！ダメージを受けた！');
+    setMsg(currentLang==='en' ? '❌ Wrong! You took damage!' : '❌ 不正解！ダメージを受けた！');
 
     if (quizHP<=0) {
       document.getElementById('b-tip-text').innerHTML = addRuby(tip);
@@ -1276,7 +1354,9 @@ function selectBattleAnswer(i, correctIdx, tip) {
   document.getElementById('b-tip-win').classList.add('show');
   document.getElementById('b-next-btn').classList.add('show');
   document.getElementById('b-next-btn').textContent =
-    currentQ+1 >= shuffledQuestions.length ? '⚔️ 最終決戦へ ▶' : '次のバトルへ ▶';
+    currentQ+1 >= shuffledQuestions.length
+      ? (currentLang==='en' ? '⚔️ Final Battle ▶' : '⚔️ 最終決戦へ ▶')
+      : (currentLang==='en' ? 'Next Battle ▶' : '次のバトルへ ▶');
   setTimeout(() => {
     document.getElementById('b-next-btn').scrollIntoView({behavior:'smooth', block:'center'});
   }, 200);
@@ -1298,18 +1378,20 @@ function showBattleResult(win) {
   document.getElementById('quiz-result').style.display = 'block';
   if (win) {
     document.getElementById('end-icon').textContent = '🏆';
-    document.getElementById('end-title').textContent = 'VICTORY!';
+    document.getElementById('end-title').textContent = currentLang==='en' ? 'VICTORY!' : 'VICTORY!';
     document.getElementById('end-title').className = 'battle-end-title win';
-    document.getElementById('end-stats').innerHTML =
-      `正解数: <span>${quizScore}</span> / ${shuffledQuestions.length}問<br>` +
-      `獲得EXP: <span>${quizScore*15+(quizScore===shuffledQuestions.length?50:0)}</span>` +
-      (quizScore===shuffledQuestions.length ? '<br><span>🌟 PERFECT CLEAR!</span>' : '');
+    const perfect = quizScore===shuffledQuestions.length;
+    document.getElementById('end-stats').innerHTML = currentLang==='en'
+      ? `Correct: <span>${quizScore}</span> / ${shuffledQuestions.length}<br>EXP gained: <span>${quizScore*15+(perfect?50:0)}</span>${perfect ? '<br><span>🌟 PERFECT CLEAR!</span>' : ''}`
+      : `正解数: <span>${quizScore}</span> / ${shuffledQuestions.length}問<br>獲得EXP: <span>${quizScore*15+(perfect?50:0)}</span>${perfect ? '<br><span>🌟 PERFECT CLEAR!</span>' : ''}`;
     setTimeout(() => { document.getElementById('end-exp').style.width=(quizScore/shuffledQuestions.length*100)+'%'; }, 600);
   } else {
     document.getElementById('end-icon').textContent = '💀';
     document.getElementById('end-title').textContent = 'GAME OVER';
     document.getElementById('end-title').className = 'battle-end-title lose';
-    document.getElementById('end-stats').innerHTML = `正解数: <span>${quizScore}</span> / ${shuffledQuestions.length}問<br>もう一度挑戦しろ！`;
+    document.getElementById('end-stats').innerHTML = currentLang==='en'
+      ? `Correct: <span>${quizScore}</span> / ${shuffledQuestions.length}<br>Try again!`
+      : `正解数: <span>${quizScore}</span> / ${shuffledQuestions.length}問<br>もう一度挑戦しろ！`;
     setTimeout(() => { document.getElementById('end-exp').style.width=(quizScore/shuffledQuestions.length*100)+'%'; }, 600);
   }
 }
