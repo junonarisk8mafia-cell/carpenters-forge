@@ -1618,12 +1618,6 @@ const SHIKAKU_EXTRA = {
   ],
 };
 
-// 資格道場追加問題をマージ
-SHIKAKU_EXAMS.forEach(exam => {
-  const extra = SHIKAKU_EXTRA[exam.id];
-  if (extra) exam.questions = [...exam.questions, ...extra];
-});
-
 const SHIKAKU_EXAMS = [
   {
     id:'daiku3', icon:'🔨', name:'建築大工技能士 3級', name_en:'Carpenter Skills Test Lv.3',
@@ -1706,6 +1700,12 @@ const SHIKAKU_EXAMS = [
     ]
   },
 ];
+
+// 資格道場追加問題をマージ
+SHIKAKU_EXAMS.forEach(exam => {
+  const extra = SHIKAKU_EXTRA[exam.id];
+  if (extra) exam.questions = [...exam.questions, ...extra];
+});
 
 // ════ 資格道場 ロジック ════
 let skExamId='', skQ=0, skScore=0, skHP=3, skAnswered=false, skQuestions=[];
