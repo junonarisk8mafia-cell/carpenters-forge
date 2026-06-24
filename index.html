@@ -179,10 +179,10 @@ body { display:flex; flex-direction:column; }
   flex:1; padding:8px 0; position:relative; z-index:2;
 }
 .battle-monster {
-  font-size:72px; line-height:1;
+  width:80px; height:80px; display:block;
   animation: monster-idle 2s ease-in-out infinite;
-  display:block; text-align:center;
   filter: drop-shadow(0 0 12px rgba(200,169,110,0.4));
+  margin:0 auto;
 }
 @keyframes monster-idle {
   0%,100% { transform: translateY(0); }
@@ -559,7 +559,7 @@ body { display:flex; flex-direction:column; }
 
 /* ── CAREER ── */
 .career-intro {
-  padding:20px 16px 8px;
+  padding:16px 16px 8px;
   font-size:13px; color:var(--hai); line-height:1.6;
 }
 .career-level {
@@ -568,25 +568,40 @@ body { display:flex; flex-direction:column; }
 }
 .career-level-header {
   display:flex; align-items:center; gap:12px;
-  padding:12px 16px; background:var(--tan3);
-  cursor:pointer;
+  padding:12px 16px; background:var(--tan3); cursor:pointer;
 }
-.career-level-header .cl-icon { font-size:24px; }
-.career-level-header h3 { font-size:14px; font-weight:700; color:var(--shiro); flex:1; }
+.career-level-header .cl-icon { font-size:22px; }
+.career-level-header h3 { font-size:13px; font-weight:700; color:var(--shiro); flex:1; }
 .career-level-header .cl-class {
   font-family:var(--font-mono); font-size:10px;
   color:var(--hinoki); letter-spacing:1px;
 }
-.career-items { padding:12px 16px; display:flex; flex-direction:column; gap:10px; }
+.career-items { padding:10px 14px; display:flex; flex-direction:column; gap:10px; }
 .career-item {
-  border-left:3px solid var(--tan3); padding:8px 12px;
+  border-left:3px solid var(--tan3); padding:10px 12px;
+  background:rgba(0,0,0,0.15); border-radius:0 4px 4px 0;
 }
 .career-item.gold { border-color:var(--hinoki); }
-.career-item.global { border-color:var(--ao); }
-.career-item h4 { font-size:13px; font-weight:700; color:var(--shiro); margin-bottom:3px; }
+.career-item.global { border-color:var(--ao); background:rgba(46,109,164,0.08); }
+.career-item h4 { font-size:13px; font-weight:700; color:var(--shiro); margin-bottom:4px; }
 .career-item.gold h4 { color:var(--hinoki); }
 .career-item.global h4 { color:#6ab0e0; }
-.career-item p { font-size:11px; color:var(--hai); line-height:1.4; }
+.career-item p { font-size:11px; color:var(--hai); line-height:1.5; margin-bottom:6px; }
+.career-meta {
+  display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;
+}
+.career-tag {
+  font-family:var(--font-mono); font-size:10px;
+  padding:2px 7px; border-radius:3px; white-space:nowrap;
+}
+.career-tag.cost { background:rgba(192,57,43,0.2); color:#e87065; border:1px solid rgba(192,57,43,0.3); }
+.career-tag.time { background:rgba(200,169,110,0.15); color:var(--hinoki); border:1px solid rgba(200,169,110,0.3); }
+.career-tag.req { background:rgba(61,122,74,0.2); color:#6DD47E; border:1px solid rgba(61,122,74,0.3); }
+.career-tag.salary { background:rgba(46,109,164,0.2); color:#6ab0e0; border:1px solid rgba(46,109,164,0.3); }
+.career-path-arrow {
+  text-align:center; color:var(--hinoki); font-size:18px;
+  padding:4px 0; opacity:0.6;
+}
 
 /* ── BLUEPRINT BATTLE ── */
 .bb-canvas-wrap {
@@ -1078,6 +1093,85 @@ function getQ(q) {
   return { q:q.q, choices:q.choices, tip:q.tip, a:q.a };
 }
 
+// ════ SVG MONSTERS ════
+const MONSTER_SVG = {
+  1: `<svg viewBox="0 0 80 80" width="80" height="80">
+    <circle cx="40" cy="35" r="22" fill="#2a5a8a" opacity="0.9"/>
+    <ellipse cx="40" cy="58" rx="14" ry="8" fill="#1a3a5a"/>
+    <circle cx="32" cy="30" r="5" fill="white"/><circle cx="48" cy="30" r="5" fill="white"/>
+    <circle cx="33" cy="30" r="3" fill="#ff6b6b"/><circle cx="49" cy="30" r="3" fill="#ff6b6b"/>
+    <path d="M30 44 Q40 50 50 44" stroke="#C8A96E" stroke-width="2" fill="none"/>
+    <text x="28" y="22" font-size="10" fill="#C8A96E">?!</text>
+    <ellipse cx="20" cy="35" rx="5" ry="8" fill="#2a5a8a"/><ellipse cx="60" cy="35" rx="5" ry="8" fill="#2a5a8a"/>
+  </svg>`,
+  2: `<svg viewBox="0 0 80 80" width="80" height="80">
+    <rect x="20" y="20" width="40" height="40" rx="4" fill="#8B4513" opacity="0.9"/>
+    <rect x="25" y="25" width="30" height="30" rx="2" fill="#A0522D"/>
+    <circle cx="32" cy="35" r="4" fill="#ff4444"/><circle cx="48" cy="35" r="4" fill="#ff4444"/>
+    <rect x="30" y="44" width="20" height="3" rx="1" fill="#C8A96E"/>
+    <rect x="15" y="30" width="8" height="20" rx="2" fill="#8B4513"/>
+    <rect x="57" y="30" width="8" height="20" rx="2" fill="#8B4513"/>
+    <polygon points="30,20 40,10 50,20" fill="#C8A96E"/>
+  </svg>`,
+  3: `<svg viewBox="0 0 80 80" width="80" height="80">
+    <ellipse cx="40" cy="45" rx="25" ry="20" fill="#5D4037" opacity="0.9"/>
+    <ellipse cx="40" cy="30" rx="18" ry="15" fill="#795548"/>
+    <circle cx="33" cy="27" r="4" fill="#FFEB3B"/><circle cx="47" cy="27" r="4" fill="#FFEB3B"/>
+    <circle cx="33" cy="27" r="2" fill="#333"/><circle cx="47" cy="27" r="2" fill="#333"/>
+    <path d="M32 38 L28 42 M36 40 L34 45 M44 40 L46 45 M48 38 L52 42" stroke="#4a3020" stroke-width="2"/>
+    <ellipse cx="40" cy="55" rx="15" ry="6" fill="#4a3020"/>
+    <rect x="18" y="38" width="6" height="14" rx="2" fill="#5D4037"/>
+    <rect x="56" y="38" width="6" height="14" rx="2" fill="#5D4037"/>
+  </svg>`,
+  4: `<svg viewBox="0 0 80 80" width="80" height="80">
+    <polygon points="40,5 70,65 10,65" fill="#1a1a2e" opacity="0.95"/>
+    <polygon points="40,15 62,60 18,60" fill="#2d2d5e"/>
+    <circle cx="32" cy="40" r="5" fill="#00ffff" opacity="0.8"/><circle cx="48" cy="40" r="5" fill="#00ffff" opacity="0.8"/>
+    <line x1="20" y1="55" x2="60" y2="55" stroke="#C8A96E" stroke-width="1.5" stroke-dasharray="3,2"/>
+    <line x1="15" y1="48" x2="65" y2="48" stroke="#C8A96E" stroke-width="1" stroke-dasharray="2,3" opacity="0.6"/>
+    <polygon points="40,22 44,32 36,32" fill="#C8A96E" opacity="0.8"/>
+  </svg>`,
+  5: `<svg viewBox="0 0 80 80" width="80" height="80">
+    <rect x="22" y="25" width="36" height="30" rx="3" fill="#4a6741" opacity="0.9"/>
+    <rect x="28" y="30" width="10" height="20" rx="1" fill="#2d4a2a"/>
+    <rect x="42" y="30" width="10" height="20" rx="1" fill="#2d4a2a"/>
+    <rect x="28" y="38" width="24" height="4" rx="1" fill="#6a9a60"/>
+    <circle cx="30" cy="28" r="3" fill="#ff6b35"/><circle cx="50" cy="28" r="3" fill="#ff6b35"/>
+    <rect x="18" y="32" width="8" height="16" rx="2" fill="#4a6741"/>
+    <rect x="54" y="32" width="8" height="16" rx="2" fill="#4a6741"/>
+    <rect x="32" y="55" width="16" height="8" rx="2" fill="#3d5a38"/>
+  </svg>`,
+  6: `<svg viewBox="0 0 80 80" width="80" height="80">
+    <ellipse cx="40" cy="38" rx="22" ry="25" fill="#6a0dad" opacity="0.85"/>
+    <ellipse cx="40" cy="25" rx="15" ry="12" fill="#8b00ff" opacity="0.8"/>
+    <circle cx="33" cy="22" r="4" fill="#ffff00"/><circle cx="47" cy="22" r="4" fill="#ffff00"/>
+    <circle cx="33" cy="22" r="2" fill="#333"/><circle cx="47" cy="22" r="2" fill="#333"/>
+    <path d="M32 32 Q40 38 48 32" stroke="#ffff00" stroke-width="2" fill="none"/>
+    <text x="26" y="50" font-size="8" fill="#ffff00" opacity="0.9">???</text>
+    <ellipse cx="22" cy="38" rx="5" ry="9" fill="#6a0dad"/><ellipse cx="58" cy="38" rx="5" ry="9" fill="#6a0dad"/>
+  </svg>`,
+  7: `<svg viewBox="0 0 80 80" width="80" height="80">
+    <rect x="15" y="15" width="50" height="50" rx="5" fill="#0a1628" opacity="0.95"/>
+    <rect x="20" y="20" width="40" height="40" rx="3" fill="#0f2040"/>
+    <line x1="25" y1="30" x2="55" y2="30" stroke="#C8A96E" stroke-width="1.5"/>
+    <line x1="25" y1="38" x2="55" y2="38" stroke="#C8A96E" stroke-width="1"/>
+    <line x1="25" y1="46" x2="45" y2="46" stroke="#C8A96E" stroke-width="1"/>
+    <circle cx="50" cy="46" r="4" fill="#ff4444"/><circle cx="50" cy="46" r="2" fill="#ff0000"/>
+    <rect x="28" y="53" width="10" height="5" rx="1" fill="#2E6DA4"/>
+    <text x="22" y="27" font-size="7" fill="#C8A96E" opacity="0.8">GL±0</text>
+  </svg>`,
+  8: `<svg viewBox="0 0 80 80" width="80" height="80">
+    <ellipse cx="40" cy="50" rx="28" ry="20" fill="#8B0000" opacity="0.8"/>
+    <ellipse cx="40" cy="35" rx="20" ry="22" fill="#B22222"/>
+    <polygon points="30,15 40,5 50,15 45,15 40,10 35,15" fill="#C8A96E"/>
+    <polygon points="20,25 10,18 18,28" fill="#C8A96E"/><polygon points="60,25 70,18 62,28" fill="#C8A96E"/>
+    <circle cx="33" cy="30" r="5" fill="#ffff00"/><circle cx="47" cy="30" r="5" fill="#ffff00"/>
+    <circle cx="33" cy="30" r="2.5" fill="#ff4400"/><circle cx="47" cy="30" r="2.5" fill="#ff4400"/>
+    <path d="M28 42 Q40 50 52 42" stroke="#C8A96E" stroke-width="3" fill="none"/>
+    <ellipse cx="40" cy="60" rx="20" ry="8" fill="#6B0000"/>
+  </svg>`,
+};
+
 const MONSTERS = {
   1: { name:'🗣️ 言葉の怪人', emoji:'🗣️' },
   2: { name:'🔧 工具の鬼', emoji:'🔧' },
@@ -1124,6 +1218,16 @@ const QUESTIONS = {
       q_en:'Which Japanese word means "Right"?', choices_en:['Ue (上)','Shita (下)','Migi (右)','Hidari (左)'], tip_en:'Right=Migi(右), Left=Hidari(左), Up=Ue(上), Down=Shita(下). Learn these 4 directions first!' },
     { q:'「お疲れ様でした」はいつ使う言葉？', a:3, choices:['朝の挨拶','昼休みの挨拶','作業開始時','仕事終了時'], tip:'「お疲れ様でした」は仕事の終わりに使う挨拶。英語でGood work や Thank you for your work。',
       q_en:'When do you say "Otsukaresama deshita"?', choices_en:['Morning greeting','Lunch break greeting','When starting work','When finishing work for the day'], tip_en:'"Otsukaresama deshita" is said at the end of the workday. It means "Good work today" or "Thank you for your hard work."' },
+    { q:'「危ない！」と言われたらどうする？', a:0, choices:['すぐに動きを止める','作業を続ける','大きな声で返事する','道具を置く'], tip:'「危ない」= Danger! まず動きを止めて周りを確認する。安全最優先。',
+      q_en:'The foreman yells "Abunai!" What do you do first?', choices_en:['Immediately stop moving','Keep working','Shout back loudly','Put down your tools'], tip_en:'"Abunai!" means Danger! Stop immediately and check your surroundings. Safety first always.' },
+    { q:'「手伝ってくれ」は何を頼まれているか？', a:1, choices:['休んでくれ','助けてくれ・一緒にやってくれ','道具を持ってきてくれ','帰っていい'], tip:'「手伝う」= to help / assist。「手伝ってくれ」は一緒に作業を手伝うことを依頼している。',
+      q_en:'What does "Tetsudatte kure" mean?', choices_en:['Take a rest','Help me / assist me','Bring me a tool','You can go home'], tip_en:'"Tetsudau" means to help or assist. The foreman is asking you to help with the task together.' },
+    { q:'「もっとゆっくり」は何を意味するか？', a:2, choices:['もっと速く','止まれ','もっとゆっくり作業しろ','もっと強く'], tip:'「ゆっくり」= slowly。「もっとゆっくり」は速度を落として慎重に作業するよう指示している。',
+      q_en:'What does "Motto yukkuri" mean?', choices_en:['Faster','Stop','Slower / more carefully','Harder'], tip_en:'"Yukkuri" = slowly. "Motto yukkuri" means do it more slowly and carefully.' },
+    { q:'「ここじゃない」と言われた。どういう意味？', a:3, choices:['ここで合っている','ここを切れ','ここを掃除しろ','この場所ではない・違う場所に置け'], tip:'「じゃない」は否定。「ここじゃない」= Not here。別の場所に置くか移動する。',
+      q_en:'The foreman said "Koko ja nai." What does it mean?', choices_en:['This is the right place','Cut here','Clean here','Not here — put it somewhere else'], tip_en:'"Ja nai" is a negation. "Koko ja nai" = Not here. Move it to the correct location.' },
+    { q:'「いいよ」と言われた時の意味は？', a:0, choices:['OK・それで良い','いや・だめだ','もう一度やれ','休んでいい'], tip:'「いいよ」= That\'s fine / OK / Good。承認・許可のサイン。「いいね」も同様の意味で使われる。',
+      q_en:'The foreman said "Ii yo." What does it mean?', choices_en:['OK / That\'s good / Approved','No / Not OK','Do it again','You can rest'], tip_en:'"Ii yo" = That\'s fine or OK. It is a sign of approval. "Ii ne" is similar and means "Nice!"' },
   ],
   2: [
     { q:'「ゲンノウ」とは何か？', a:1, choices:['鋸','金槌・木槌','鑿','鉋'], tip:'ゲンノウ（玄翁）は木槌・金槌の総称。ハンマーのことです。',
@@ -1251,7 +1355,7 @@ function startStage(id) {
   document.getElementById('quiz-battle').style.display = 'block';
   document.getElementById('quiz-result').style.display = 'none';
 
-  document.getElementById('b-monster').textContent = m.emoji;
+  document.getElementById('b-monster').innerHTML = MONSTER_SVG[id] || MONSTER_SVG[1];
   document.getElementById('b-monster').className = 'battle-monster';
   document.getElementById('b-enemy-name').textContent = m.name;
   document.getElementById('b-stage-badge').innerHTML = `STAGE ${id}<br>Q1/${shuffledQuestions.length}`;
@@ -1878,51 +1982,91 @@ function renderDict() {
   });
 }
 
-// ════ CAREER ════
+// ════ CAREER DATA（詳細版）════
 const CAREER_DATA = [
-  { class:'CLASS ENTRY', icon:'🔰', label:'エントリー', items:[
-    { name:'技能実習生', type:'gold', detail:'現場日本語・工具知識・安全基礎 ← このアプリのメインターゲット' },
-    { name:'特定技能1号', type:'gold', detail:'JLPT N4以上・技能評価試験・在留5年' },
+  { class:'CLASS ENTRY', icon:'🔰', label:'エントリー / Entry', items:[
+    { name:'技能実習生', type:'gold',
+      detail:'現場日本語・工具知識・安全基礎。このアプリのメインターゲット。',
+      cost:'受入機関が負担', time:'最大5年', req:'送り出し機関経由', salary:'月15〜20万円' },
+    { name:'特定技能1号', type:'gold',
+      detail:'技能実習修了後に移行可能。単独で就職活動も可能になる。',
+      cost:'試験料：約1〜3万円', time:'在留最大5年', req:'JLPT N4以上 / 技能評価試験合格', salary:'月20〜25万円' },
   ]},
-  { class:'CLASS SKILLED', icon:'🔨', label:'スキルド', items:[
-    { name:'建築大工技能士 3級', type:'', detail:'入門資格 / 基本工具・加工 / 実技+学科' },
-    { name:'建築大工技能士 2級', type:'', detail:'実務2年以上 / 木造在来工法 / 給与アップ直結' },
-    { name:'特定技能2号', type:'', detail:'在留無期限・家族帯同可 / 建設分野で取得可能' },
+  { class:'CLASS SKILLED', icon:'🔨', label:'スキルド / Skilled', items:[
+    { name:'建築大工技能士 3級', type:'',
+      detail:'入門資格。基本工具・加工・材料の知識を証明。実技+学科試験。',
+      cost:'受験料：約1.8万円', time:'試験準備：3〜6ヶ月', req:'実務経験不問（学生可）', salary:'採用時に有利' },
+    { name:'建築大工技能士 2級', type:'',
+      detail:'木造在来工法の墨付け・加工・組立てを証明。給与アップに直結。',
+      cost:'受験料：約1.8万円', time:'試験準備：6〜12ヶ月', req:'実務経験2年以上（3級合格者は1年）', salary:'月22〜28万円' },
+    { name:'特定技能2号', type:'',
+      detail:'在留期間の上限なし。家族の帯同も可能。外国人技能者の最重要目標。',
+      cost:'試験料：約1〜3万円', time:'在留無期限', req:'特定技能1号からの移行 / 技能試験+日本語試験', salary:'月25〜35万円' },
   ]},
-  { class:'CLASS EXPERT', icon:'⚒️', label:'エキスパート', items:[
-    { name:'建築大工技能士 1級', type:'', detail:'実務7年以上 / 棟梁レベル / 独立・親方への道' },
-    { name:'2級建築施工管理技士', type:'', detail:'現場監督の資格 / 主任技術者になれる' },
-    { name:'木造建築士', type:'', detail:'設計・工事監理ができる / 木造専門の建築士' },
+  { class:'CLASS EXPERT', icon:'⚒️', label:'エキスパート / Expert', items:[
+    { name:'建築大工技能士 1級', type:'',
+      detail:'棟梁レベルの最上位資格。独立・親方への道が開ける。',
+      cost:'受験料：約1.8万円 / 講習費：5〜10万円', time:'試験準備：1〜2年', req:'実務経験7年以上（2級合格者は4年）', salary:'月30〜45万円 / 独立後は青天井' },
+    { name:'2級建築施工管理技士', type:'',
+      detail:'現場監督として主任技術者になれる。大工から管理職へのステップアップ。',
+      cost:'受験料：約1.3万円 / 参考書・講習：3〜10万円', time:'試験準備：6〜12ヶ月', req:'実務経験3年以上（学歴による）', salary:'月28〜40万円' },
+    { name:'木造建築士', type:'',
+      detail:'木造建物の設計・工事監理ができる唯一の木造専門建築士。',
+      cost:'受験料：約1.7万円 / 学校：30〜100万円', time:'試験準備：1〜2年', req:'大学建築系学科卒 or 実務経験', salary:'月28〜40万円' },
   ]},
-  { class:'CLASS ARCHITECT', icon:'📐', label:'アーキテクト', items:[
-    { name:'二級建築士', type:'', detail:'小〜中規模建物の設計・監理' },
-    { name:'1級建築施工管理技士', type:'', detail:'大規模工事の現場監督 / 監理技術者 / 高収入' },
-    { name:'一級建築士', type:'', detail:'日本最高峰の建築資格 / あらゆる建物を設計可能' },
+  { class:'CLASS ARCHITECT', icon:'📐', label:'アーキテクト / Architect', items:[
+    { name:'二級建築士', type:'',
+      detail:'小〜中規模建物の設計・工事監理。木造建築士の上位資格。',
+      cost:'受験料：約1.7万円 / 学校：30〜150万円', time:'試験準備：1〜2年', req:'建築系学科卒 or 実務経験7年以上', salary:'月30〜45万円' },
+    { name:'1級建築施工管理技士', type:'',
+      detail:'大規模工事の現場監督。監理技術者として全現場に対応できる。',
+      cost:'受験料：約1.3万円 / 講習：5〜15万円', time:'試験準備：1〜2年', req:'実務経験15年以上（学歴による）', salary:'月35〜60万円' },
+    { name:'一級建築士', type:'',
+      detail:'日本最高峰の建築資格。あらゆる建物の設計・監理が可能。',
+      cost:'受験料：約1.7万円 / 学校：50〜200万円', time:'試験準備：2〜5年（合格率10%前後）', req:'二級建築士取得後4年以上 or 大学院卒', salary:'月40〜80万円以上' },
   ]},
-  { class:'CLASS WORLD', icon:'🌏', label:'ワールド', items:[
-    { name:'APECアーキテクト', type:'global', detail:'一級建築士＋実務3年 / APEC域内で建築家として通用' },
-    { name:'LEED AP', type:'global', detail:'米国グリーンビル認証 / 国際的サステナブル建築の証明' },
-    { name:'海外Architect', type:'global', detail:'豪/英/米など各国建築士 / 一級建築士から相互承認あり' },
+  { class:'CLASS WORLD', icon:'🌏', label:'ワールド / World', items:[
+    { name:'APECアーキテクト', type:'global',
+      detail:'APEC域内21エコノミーで建築家として活動できる国際資格。',
+      cost:'登録料：約3〜5万円', time:'申請準備：3〜6ヶ月', req:'一級建築士 + 責任ある実務経験3年以上', salary:'海外案件で大幅アップ' },
+    { name:'LEED AP', type:'global',
+      detail:'米国グリーンビルディング認証。世界のサステナブル建築で必須スキル。',
+      cost:'受験料：約4〜6万円（USD400〜550）', time:'試験準備：3〜6ヶ月', req:'一定のグリーンビル実務経験', salary:'年収+100〜300万円の差別化' },
+    { name:'海外Architect（豪/英/米）', type:'global',
+      detail:'各国の建築士資格。一級建築士からの相互承認制度を活用。',
+      cost:'国により異なる（約5〜20万円）', time:'審査期間：6ヶ月〜2年', req:'一級建築士 + 各国の審査通過', salary:'現地水準（豪：年収800〜1200万円）' },
   ]},
 ];
 
 function initCareer() {
-  const tree=document.getElementById('career-tree');
-  tree.innerHTML='';
-  CAREER_DATA.forEach(level=>{
-    const el=document.createElement('div');
-    el.className='career-level';
-    el.innerHTML=`
+  const tree = document.getElementById('career-tree');
+  tree.innerHTML = '';
+  CAREER_DATA.forEach((level, idx) => {
+    if (idx > 0) {
+      const arrow = document.createElement('div');
+      arrow.className = 'career-path-arrow';
+      arrow.textContent = '↓';
+      tree.appendChild(arrow);
+    }
+    const el = document.createElement('div');
+    el.className = 'career-level';
+    el.innerHTML = `
       <div class="career-level-header">
         <span class="cl-icon">${level.icon}</span>
         <h3>${level.label}</h3>
         <span class="cl-class">${level.class}</span>
       </div>
       <div class="career-items">
-        ${level.items.map(item=>`
+        ${level.items.map(item => `
           <div class="career-item ${item.type}">
             <h4>${item.name}</h4>
             <p>${item.detail}</p>
+            <div class="career-meta">
+              <span class="career-tag cost">💰 ${item.cost}</span>
+              <span class="career-tag time">⏱ ${item.time}</span>
+              <span class="career-tag req">📋 ${item.req}</span>
+              <span class="career-tag salary">💴 ${item.salary}</span>
+            </div>
           </div>
         `).join('')}
       </div>
