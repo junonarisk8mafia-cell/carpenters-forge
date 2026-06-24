@@ -716,6 +716,7 @@ rt { font-size: 0.55em; color: var(--hinoki); letter-spacing: 0.05em; }
     <button class="nav-tab" onclick="showPage('blueprint')">BLUEPRINT</button>
     <button class="nav-tab" onclick="showPage('dict')">辞典</button>
     <button class="nav-tab" onclick="showPage('career')">CAREER</button>
+    <button class="nav-tab" onclick="showPage('shikaku')">🎓 資格道場</button>
   </div>
   <div class="lang-toggle">
     <button class="lang-btn active" id="btn-ja" onclick="setLang('ja')">🇯🇵</button>
@@ -732,9 +733,9 @@ rt { font-size: 0.55em; color: var(--hinoki); letter-spacing: 0.05em; }
     <p class="hero-sub">// 大工の現場日本語 × 技能 RPG</p>
     <div class="stat-row">
       <div class="stat-item"><div class="stat-num">8</div><div class="stat-label">STAGES</div></div>
-      <div class="stat-item"><div class="stat-num">4</div><div class="stat-label">GAMES</div></div>
+      <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">GAMES</div></div>
       <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">SLANG</div></div>
-      <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">CLASSES</div></div>
+      <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">資格道場</div></div>
     </div>
   </div>
 
@@ -774,10 +775,10 @@ rt { font-size: 0.55em; color: var(--hinoki); letter-spacing: 0.05em; }
       <div class="mod-title">キャリアMAP</div>
       <div class="mod-desc">大工→棟梁→世界へ</div>
     </div>
-    <div class="mod-card" onclick="alert('近日公開！')">
-      <div class="mod-icon">🔓</div>
-      <div class="mod-title">MORE COMING</div>
-      <div class="mod-desc">近日追加予定</div>
+    <div class="mod-card c-gold" onclick="showPage('shikaku')">
+      <div class="mod-icon">🎓</div>
+      <div class="mod-title">資格道場</div>
+      <div class="mod-desc">技能士・施工管理・建築士・特定技能</div>
     </div>
   </div>
 </div>
@@ -1013,6 +1014,76 @@ rt { font-size: 0.55em; color: var(--hinoki); letter-spacing: 0.05em; }
   <div id="career-tree"></div>
 </div>
 
+<!-- ════════ 資格道場 ════════ -->
+<div id="page-shikaku" class="page">
+  <div class="game-banner">
+    <h2>🎓 資格道場</h2>
+    <p>建築大工技能士・施工管理技士・建築士・特定技能 — 本格資格対策</p>
+  </div>
+  <div id="shikaku-select">
+    <div style="padding:8px 16px 0;">
+      <div class="hint-box">💡 各資格の試験傾向に特化した問題集。実際の試験に出る重要ポイントを完全網羅。</div>
+    </div>
+    <div id="shikaku-list" style="padding:12px 16px;"></div>
+  </div>
+  <div id="shikaku-battle" style="display:none;">
+    <div style="padding:8px 16px 0;">
+      <div class="battle-scene" style="min-height:160px;">
+        <div class="battle-hud">
+          <div class="battle-enemy-info">
+            <div class="battle-enemy-name" id="sk-exam-name">試験対策</div>
+            <div class="battle-enemy-hp-wrap">
+              <span class="battle-enemy-hp-label">HP</span>
+              <div class="battle-enemy-hp-bar"><div class="battle-enemy-hp-fill" id="sk-enemy-hp" style="width:100%"></div></div>
+            </div>
+          </div>
+          <div class="battle-stage-badge" id="sk-badge">Q1/10</div>
+        </div>
+        <div class="battle-monster-wrap">
+          <div class="battle-monster" id="sk-monster" style="font-size:56px; display:flex; align-items:center; justify-content:center;">📜</div>
+          <div class="damage-popup" id="sk-damage">CORRECT!</div>
+          <div class="miss-popup" id="sk-miss">MISS...</div>
+        </div>
+      </div>
+      <div class="player-hud">
+        <div class="player-name" id="sk-player-name">🎓 受験生</div>
+        <div class="player-hp-row">
+          <span class="player-hp-label">HP</span>
+          <div class="player-hp-bar"><div class="player-hp-fill" id="sk-hp-fill" style="width:100%"></div></div>
+        </div>
+        <div class="player-mp-row">
+          <span class="player-mp-label">EXP</span>
+          <div class="player-mp-bar"><div class="player-mp-fill" id="sk-exp-fill" style="width:0%"></div></div>
+        </div>
+        <div class="player-stats">❤️ <span id="sk-hp-num">3</span>/3　⭐ <span id="sk-score-num">0</span>pt</div>
+      </div>
+      <div class="battle-msg-win" id="sk-msg">試験開始！</div>
+      <div class="battle-tip-win" id="sk-q-win" style="display:none; border-color:var(--hinoki); background:rgba(200,169,110,0.08);">
+        <div class="battle-tip-label">QUESTION</div>
+        <div id="sk-q-text" style="font-size:14px; color:var(--shiro); line-height:1.6;"></div>
+      </div>
+      <div class="battle-cmd-win" id="sk-cmd-win" style="display:none;"></div>
+      <div class="battle-tip-win" id="sk-tip-win">
+        <div class="battle-tip-label">POINT</div>
+        <div id="sk-tip-text"></div>
+      </div>
+      <button class="battle-next-btn" id="sk-next-btn" onclick="skNext()">次の問題 ▶</button>
+    </div>
+  </div>
+  <div id="shikaku-result" style="display:none;">
+    <div class="battle-end-screen">
+      <div class="battle-end-icon" id="sk-end-icon">🏆</div>
+      <div class="battle-end-title" id="sk-end-title">合格！</div>
+      <div class="battle-end-stats" id="sk-end-stats"></div>
+      <div class="battle-exp-bar-wrap">
+        <div class="battle-exp-label">SCORE</div>
+        <div class="battle-exp-bar"><div class="battle-exp-fill" id="sk-end-exp"></div></div>
+      </div>
+      <button class="btn-primary" style="max-width:200px;" onclick="skBackToSelect()">資格選択へ戻る</button>
+    </div>
+  </div>
+</div>
+
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <button class="bottom-tab active" onclick="showPage('home')"><span class="icon">🏠</span>HOME</button>
@@ -1020,22 +1091,23 @@ rt { font-size: 0.55em; color: var(--hinoki); letter-spacing: 0.05em; }
   <button class="bottom-tab" onclick="showPage('slang')"><span class="icon">💬</span>SLANG</button>
   <button class="bottom-tab" onclick="showPage('kiwari')"><span class="icon">📐</span>CALC</button>
   <button class="bottom-tab" onclick="showPage('dict')"><span class="icon">📖</span>辞典</button>
+  <button class="bottom-tab" onclick="showPage('shikaku')"><span class="icon">🎓</span>資格</button>
 </div>
 
 <script>
 // ════ PAGE NAVIGATION ════
-const pages = ['home','quiz','slang','kiwari','workshop','blueprint','dict','career'];
+const pages = ['home','quiz','slang','kiwari','workshop','blueprint','dict','career','shikaku'];
 function showPage(id) {
   pages.forEach(p => {
     document.getElementById('page-'+p).classList.remove('active');
   });
   document.getElementById('page-'+id).classList.add('active');
-  document.querySelectorAll('.nav-tab').forEach((t,i) => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.bottom-tab').forEach(t => t.classList.remove('active'));
   const navTabs = document.querySelectorAll('.nav-tab');
-  const pageMap = {home:0,quiz:1,slang:2,kiwari:3,workshop:4,blueprint:5,dict:6,career:7};
+  const pageMap = {home:0,quiz:1,slang:2,kiwari:3,workshop:4,blueprint:5,dict:6,career:7,shikaku:8};
   if (navTabs[pageMap[id]]) navTabs[pageMap[id]].classList.add('active');
-  const botMap = {home:0,quiz:1,slang:2,kiwari:3,dict:4};
+  const botMap = {home:0,quiz:1,slang:2,kiwari:3,dict:4,shikaku:5};
   if (botMap[id] !== undefined) document.querySelectorAll('.bottom-tab')[botMap[id]].classList.add('active');
   window.scrollTo(0,0);
 }
@@ -1315,6 +1387,289 @@ const QUESTIONS = {
   ],
 };
 
+// ════ EXTRA QUESTIONS（各ステージ追加分）════
+const QUESTIONS_EXTRA = {
+  2: [
+    { q:'「丸鋸（まるのこ）」は何に使う工具か？', a:0, choices:['木材を直線に切断する電動工具','穴を開ける工具','木材を削る工具','釘を打つ工具'], tip:'丸鋸は円形の刃が回転して木材を直線に切断する電動工具。使用前に刃の状態を必ず確認する。' },
+    { q:'「水平器（すいへいき）」は何を測る道具か？', a:1, choices:['距離','水平・傾き','温度','重さ'], tip:'水平器（レベル）は気泡管の位置で水平・垂直を確認する道具。床・壁・棚の施工に必須。' },
+    { q:'釘を打つ時に「捨て釘」を使う目的は？', a:2, choices:['余った釘を捨てるため','装飾として使うため','仮固定のために一時的に使う釘','強度を上げるため'], tip:'捨て釘は仮固定用。後で抜くことが前提の仮止め用釘。本釘を打つ前の位置決めに使う。' },
+    { q:'「インパクトドライバー」は何をするための工具か？', a:3, choices:['穴を開ける','木材を切る','塗料を塗る','ネジを締める・緩める'], tip:'インパクトドライバーは打撃力で強力にネジを締める電動工具。現場では「インパクト」と略して呼ぶことが多い。' },
+    { q:'「コンベックス」とは何か？', a:0, choices:['巻き尺・メジャー','コンクリートミキサー','電動工具','足場材料'], tip:'コンベックスは金属製の巻き尺（メジャー）のこと。「コンベ」と略すことも多い。現場の基本測定工具。' },
+  ],
+  3: [
+    { q:'「スギ」材の特徴として正しいのは？', a:1, choices:['非常に硬く重い','軽くて加工しやすく国産材で最も普及している','水に強く腐らない','香りが全くない'], tip:'スギは軽くて柔らかく加工しやすい国産材。日本で最も生産量が多い木材で、構造材・内装材に広く使われる。' },
+    { q:'木材の「木裏（きうら）」と「木表（きおもて）」の違いは？', a:2, choices:['木の右側と左側','木の上部と下部','樹皮側の面と芯側の面','節の多い面と少ない面'], tip:'木表は樹皮に近い外側の面。木裏は芯に近い内側の面。乾燥すると木表側に反るため、施工時の向きが重要。' },
+    { q:'「含水率（がんすいりつ）」が高い木材を使うとどうなるか？', a:0, choices:['乾燥後に変形・割れが生じやすい','強度が上がる','色が濃くなる','重くなるだけで問題ない'], tip:'含水率が高い（乾燥が不十分な）木材は乾燥後に収縮・反り・割れが起きやすい。適正含水率15%以下が目安。' },
+    { q:'「KD材」とは何か？', a:3, choices:['特殊な種類の木材','海外輸入材','薬品処理した木材','人工乾燥（Kiln Dry）した木材'], tip:'KD材はKiln Dry（窯乾燥）材のこと。人工乾燥で含水率を管理した木材で、寸法安定性が高い。' },
+    { q:'「節（ふし）」が多い木材はどのような特性があるか？', a:1, choices:['強度が高くなる','強度が低下し加工が難しくなる','耐水性が上がる','色が均一になる'], tip:'節は枝が木材に取り込まれた部分。節周辺は繊維が乱れて強度が低下し、加工時に割れやすい。' },
+  ],
+  4: [
+    { q:'「通り（とおり）」を確認するとはどういうことか？', a:2, choices:['道路の確認','通行人の確認','材料や構造が一直線に並んでいるか確認すること','工事の進捗確認'], tip:'「通りを見る」は柱や梁が一直線に並んでいるかを確認すること。「通りが出ていない」＝直線になっていない。' },
+    { q:'「逃げ（にげ）」とは何か？', a:0, choices:['施工誤差を吸収するための余裕寸法','危険から逃げること','材料の端を切り落とすこと','足場から降りること'], tip:'逃げは施工誤差や熱膨張を吸収するために設ける余裕寸法。「逃げを取る」は設計上の余裕を設けること。' },
+    { q:'水盛り（みずもり）・遣り方（やりかた）の目的は？', a:1, choices:['水を使った洗浄作業','建物の正確な位置・高さの基準を設定する作業','水道管の設置作業','雨水排水の設計'], tip:'遣り方は建物の正確な位置・高さ・水平を設定するための仮設物。すべての施工の基準になる最重要準備作業。' },
+    { q:'「心（しん）」とは建築でどういう意味か？', a:3, choices:['建物の中央の部屋','大工の精神','材料の中心部分の木質','柱・梁などの中心線'], tip:'「心」は柱や梁の中心線のこと。「心々（しんしん）」は2本の柱の中心線間の距離。設計・施工の基準となる。' },
+    { q:'「返り（かえり）」とは何か？', a:0, choices:['鋸の刃が木に引っかかる部分','作業のやり直し','工具を返却すること','材料を元に戻すこと'], tip:'「返り」は鋸の刃の先端が切断後に引っかかる現象。刃のあさりや使い方で調整する。' },
+  ],
+  5: [
+    { q:'「鎌継ぎ（かまつぎ）」の特徴は？', a:1, choices:['最も単純な継手','引張力に強く抜けにくい鎌形の継手','圧縮力専用の継手','装飾用の継手'], tip:'鎌継ぎは鎌（カマ）の形に加工した引張に強い継手。桁・梁・土台などの水平材を繋ぐ際によく使われる。' },
+    { q:'「ほぞ（枘）」とは何か？', a:2, choices:['木材の節のこと','木材の割れのこと','材料の端に突き出た凸形の部分（穴に差し込む側）','接着剤のこと'], tip:'ほぞは材料の端に作られた凸形の部分。相手の「ほぞ穴」に差し込んで接合する。柱と梁の接合の基本形。' },
+    { q:'「ほぞ穴（枘穴）」を開けるために主に使う工具は？', a:0, choices:['鑿（のみ）と玄翁（げんのう）','鋸（のこ）','鉋（かんな）','指矩（さしがね）'], tip:'ほぞ穴は鑿（のみ）を玄翁（げんのう）で叩いて彫り込む。電動の場合はドリルで荒取り後に鑿で仕上げる。' },
+    { q:'「渡り顎（わたりあご）」とは何か？', a:3, choices:['橋の構造部分','顎の形をした工具','木材の表面模様','母屋・桁の上面に刻んだ欠き込みで垂木を受ける仕口'], tip:'渡り顎は母屋や桁の上部に欠き込みを入れ、垂木（屋根の斜め材）を受けるための仕口。屋根工事の基本。' },
+    { q:'「木口（こぐち）」と「木端（こば）」の違いは？', a:1, choices:['木の上部と下部','材の切断面（木口）と長さ方向の狭い側面（木端）','硬い部分と柔らかい部分','外側と内側'], tip:'木口は材の切断面（繊維が見える端面）。木端は長さ方向の狭い側面。それぞれ加工・仕上げ方が異なる。' },
+  ],
+  6: [
+    { q:'「段取り（だんどり）」が大事と言われる理由は？', a:0, choices:['作業前の準備・計画が仕事の効率と質を決めるから','段のある場所で作業するから','踊り場のことだから','給料の話し合いのことだから'], tip:'段取りは作業の事前準備・段階的な計画のこと。「段取り八分、仕事二分」という言葉通り、準備が仕事の大半を決める。' },
+    { q:'「手間（てま）」とはどういう意味か？', a:2, choices:['手の間隔','手の届く範囲','作業にかかる労力・時間。または職人の日当','手を使う作業'], tip:'手間は作業にかかる労力・時間のこと。また職人への日当を「手間賃」という。「手間がかかる」は時間・労力がかかる意味。' },
+    { q:'「あとしまつ」は何を指すか？', a:1, choices:['仕事の翌日の作業','作業後の片付け・清掃・道具の手入れ','後輩への指導','仕上げ作業'], tip:'あとしまつは作業後の片付け・清掃・道具の手入れのこと。現場を綺麗にして帰るのは職人の基本マナー。' },
+    { q:'「腰を入れる」と言われたらどうするか？', a:3, choices:['腰を曲げる','腰痛に注意する','腰の高さで作業する','もっと力を入れて本気で作業する'], tip:'「腰を入れる」は本気で力を込めること。「もっと腰を入れてやれ」は「もっと本気でやれ」という意味。' },
+    { q:'「段差（だんさ）をとる」とは何をすることか？', a:0, choices:['2つの面の高さの差を調整・解消すること','段階的に作業すること','休憩を取ること','段を設置すること'], tip:'段差とは2つの面の高さの違いのこと。「段差をとる」は高さを揃えること。床や敷居の施工で重要。' },
+  ],
+  7: [
+    { q:'「BM（ベンチマーク）」とは何か？', a:1, choices:['ベンチの寸法','工事の高さ基準となる固定点','仕事の目標数値','木材のブランド名'], tip:'BMはBench Mark（ベンチマーク）の略。工事前に設定する高さの絶対基準点。GLやFLはこれを基準に決まる。' },
+    { q:'「伏図（ふせず）」は何を示す図面か？', a:2, choices:['倒れた建物の図','地下の図面','構造材（梁・桁など）の配置を真上から見た図','屋根の形状図'], tip:'伏図は床・屋根の構造材（梁・桁・根太など）の配置を真上から見た図。「床伏図」「屋根伏図」などがある。' },
+    { q:'「矩計図（かなばかりず）」とは何か？', a:0, choices:['建物の断面詳細図（基礎から屋根まで）','平面の寸法図','外観の詳細図','材料の一覧表'], tip:'矩計図は建物を縦に切った詳細断面図。基礎から屋根まで各部の寸法・構造・仕上げが記載された重要図面。' },
+    { q:'労働安全衛生法で作業床の高さが何m以上で墜落防止措置が必要か？', a:1, choices:['1m以上','2m以上','3m以上','5m以上'], tip:'作業床の高さが2m以上の場所での作業では墜落防止のための手すり・安全帯などの措置が労働安全衛生法で義務付けられている。' },
+    { q:'「フラットデッキ」は何に使われるか？', a:3, choices:['屋根材','外壁材','断熱材','コンクリートスラブ打設時の型枠（捨て型枠）'], tip:'フラットデッキはコンクリートスラブ打設に使う波型鋼板の捨て型枠。鉄骨造・RC造で広く使われる。' },
+  ],
+  8: [
+    { q:'建築大工技能士の実技試験で「原寸図」を描く目的は？', a:0, choices:['実際の寸法で部材の形状・位置を確認するため','設計図を清書するため','工事写真を撮るため','材料の発注のため'], tip:'原寸図は1:1のスケールで実際の寸法通りに描く図。試験では原寸図から各部材の寸法を読み取り加工する。' },
+    { q:'技能検定の「学科試験」でよく出る法律は？', a:2, choices:['道路交通法','民法','建築基準法・労働安全衛生法','消防法'], tip:'建築大工技能士の学科試験では建築基準法・労働安全衛生法・建設業法などの法令知識が頻出。' },
+    { q:'1級建築大工技能士と2級の主な違いは？', a:1, choices:['試験問題の言語が違う','求められる実務経験年数と加工の難易度が異なる','受験料が違うだけ','試験会場が違う'], tip:'1級は実務7年以上（2級取得者は4年）で受験可能。実技の難易度も高く、より複雑な継手・仕口の加工が求められる。' },
+    { q:'技能検定の「実技試験」で配点が最も高い項目は？', a:3, choices:['作業時間','工具の種類','材料の数','加工精度・仕上がりの品質'], tip:'実技試験は加工精度・仕上がり品質が最重要。寸法誤差・直角度・表面仕上げなどが細かく採点される。' },
+    { q:'建築大工技能士試験の受験申請先はどこか？', a:0, choices:['都道府県職業能力開発協会','ハローワーク','建設会社','国土交通省'], tip:'技能検定の受験申請は都道府県の職業能力開発協会。実施は都道府県知事（厚生労働省委任）が行う。' },
+  ],
+};
+
+// 追加問題をマージ
+Object.keys(QUESTIONS_EXTRA).forEach(id => {
+  if (QUESTIONS[id]) {
+    QUESTIONS[id] = [...QUESTIONS[id], ...QUESTIONS_EXTRA[id]];
+  }
+});
+
+// ════ 資格道場（SHIKAKU DOJO）════
+const SHIKAKU_EXAMS = [
+  {
+    id:'daiku3', icon:'🔨', name:'建築大工技能士 3級', name_en:'Carpenter Skills Test Lv.3',
+    color:'var(--midori)', desc:'入門資格。実務経験不問で受験可。',
+    questions:[
+      { q:'建築大工技能士3級の試験は何級から受験できるか？', a:0, choices:['実務経験不問で誰でも受験可能','実務経験1年以上','実務経験2年以上','関連学科卒業者のみ'], tip:'3級は実務経験不問。学生・実習生でも受験でき、技能実習2号修了前でも挑戦できる入門資格。' },
+      { q:'建築大工技能士3級の実技試験の内容は？', a:1, choices:['高層建築の施工','基本的な木材加工（墨付け・のこ引き・鑿作業）','コンクリート打設','鉄骨溶接'], tip:'3級実技は基本的な木材加工技術（墨付け・のこ引き・鑿作業）が中心。試験時間は約2〜3時間。' },
+      { q:'建築大工技能士試験の実施機関はどこか？', a:2, choices:['国土交通省','建設業協会','都道府県職業能力開発協会','ハローワーク'], tip:'技能検定は都道府県職業能力開発協会が実施。受験申請もここに行う。試験は年1〜2回実施。' },
+      { q:'技能士証（合格証書）の有効期限は？', a:3, choices:['5年','10年','毎年更新が必要','有効期限なし（生涯有効）'], tip:'技能士の資格は生涯有効。更新不要で、一度取得すれば永続して使用できる国家資格。' },
+      { q:'3級合格後、2級を受験できる実務経験の短縮は？', a:1, choices:['短縮なし（2年必要）','3級合格者は実務1年で2級受験可能','即受験可能','5年必要'], tip:'3級合格者は2級受験に必要な実務経験が短縮される。通常2年必要なところ、3級合格者は1年で可能。' },
+      { q:'技能検定の「学科試験」は何形式か？', a:0, choices:['マークシート（四択・真偽式）','記述式','口述式','実演式'], tip:'学科試験はマークシート形式。真偽式（○×）と四択式の混合。建築知識・安全法規・力学の基礎が出題される。' },
+      { q:'木材加工で「墨付け」が重要な理由は？', a:2, choices:['見た目が良くなるから','墨の香りが木材を保護するから','切断・加工位置の正確な基準になるから','伝統的な儀式だから'], tip:'墨付けは加工位置の基準線を引く作業。この精度が最終的な製品の品質を左右する最重要工程。' },
+      { q:'「鋸（のこ）引き」で「引き切り」と「押し切り」のうち日本の鋸の基本は？', a:0, choices:['引いて切る（引き切り）','押して切る（押し切り）','どちらでも良い','電動のみ使用'], tip:'日本の鋸は「引く時に切れる」引き切り方式。西洋の鋸（押し切り）と逆。これが日本の鋸の大きな特徴。' },
+      { q:'実技試験で「制限時間」をオーバーした場合どうなるか？', a:1, choices:['失格になる','時間超過分が減点される','採点が甘くなる','もう一回やり直せる'], tip:'制限時間オーバーは時間超過による減点。失格にはならないが、大幅な超過は合格に影響する。' },
+      { q:'技能検定合格後に使える称号は？', a:3, choices:['一級建築士','施工管理技士','建設業法上の技術者','建築大工技能士（等級付き）'], tip:'技能検定合格者は「○級建築大工技能士」と称することができる。国家資格として名刺や求職活動に使える。' },
+    ]
+  },
+  {
+    id:'daiku2', icon:'⚒️', name:'建築大工技能士 2級', name_en:'Carpenter Skills Test Lv.2',
+    color:'var(--hinoki)', desc:'実務2年以上。給与・評価に直結。',
+    questions:[
+      { q:'2級の実技試験「木造軸組構法」で主に使われる材料は？', a:0, choices:['製材（無垢材）','鉄筋コンクリート','鉄骨','ALC板'], tip:'2級実技は木造在来軸組工法での墨付け・加工・組立てが対象。ヒノキ・スギなどの製材（無垢材）を使用。' },
+      { q:'2級実技試験の試験時間はおよそどのくらいか？', a:2, choices:['1時間30分','3時間','5時間30分','8時間'], tip:'2級の実技試験時間は約5時間30分。この中で原寸図作成から組立て完成まで行う。集中力の持続が重要。' },
+      { q:'「原寸図」を作成する際に最初にすることは？', a:1, choices:['材料を切る','基準線（水平・垂直の基準）を引く','組み立てる','墨を入れる'], tip:'原寸図作成の最初は基準線の設定。水平・垂直の基準線を正確に引いてから各部材の形状を描いていく。' },
+      { q:'2級で出題される「火打ち梁（ひうちばり）」の役割は？', a:3, choices:['屋根を支える','外壁を固定する','基礎を補強する','床・屋根の水平面を固め変形を防ぐ（水平ブレース）'], tip:'火打ち梁は床・屋根の水平面に斜めに入れる補強材。地震・風による変形（ラッキング）を防ぐ重要部材。' },
+      { q:'「キャンバー（むくり）」とは何か？', a:0, choices:['梁にあらかじめ設けるわずかな上向きのアーチ（むくり）','木材の反り','継手の名称','工具の種類'], tip:'キャンバーは梁にあらかじめ付ける上向きのむくり。荷重で梁が撓んだ時に水平になるよう設計段階で設ける。' },
+      { q:'「隅木（すみき）」は屋根のどこに使われるか？', a:1, choices:['屋根の水平部分','屋根の四隅の斜め材','棟の頂点','軒先の水平材'], tip:'隅木は寄棟・入母屋屋根の四隅に斜めに架ける木材。屋根の角を形成する重要な構造材。' },
+      { q:'2級学科試験でよく出る「含水率」の適正値は？', a:2, choices:['30%以下','25%以下','15%以下（構造材）','5%以下'], tip:'構造材の適正含水率は15%以下。それ以上では乾燥による変形・強度低下のリスクが高い。KD材（人工乾燥材）推奨。' },
+      { q:'「根太（ねだ）」とは何か？', a:3, choices:['基礎の根部分','木の根のような柱','屋根の根元部分','床板を支える横架材（床梁に直角に架ける小梁）'], tip:'根太は床板を直接支える横架材。床梁の上に@303〜455mmピッチで並べる。フローリングは根太の上に固定される。' },
+      { q:'「胴差し（どうさし）」の位置は？', a:0, choices:['2階床レベルで1階と2階の管柱を繋ぐ横架材','基礎と土台の間','屋根の頂部','軒先の端部'], tip:'胴差しは2階床レベルで1階・2階の管柱を連結する横架材。2階床の荷重を1階柱に伝える重要部材。' },
+      { q:'2級実技で「ほぞ（枘）の精度」が採点で重視される理由は？', a:1, choices:['見た目が美しいから','ほぞの精度が組手の強度・接合品質に直結するから','時間短縮につながるから','材料節約になるから'], tip:'ほぞの精度（寸法・直角度・仕上げ面）は組手の強度と接合品質に直結。ガタや歪みは構造上の問題につながる。' },
+    ]
+  },
+  {
+    id:'sekou2', icon:'📋', name:'2級建築施工管理技士', name_en:'2nd-class Construction Mgmt Engineer',
+    color:'var(--ao)', desc:'現場監督の入口。主任技術者になれる。',
+    questions:[
+      { q:'2級建築施工管理技士の第一次検定（学科）の受験資格は？', a:0, choices:['17歳以上であれば受験可能','実務経験5年以上','一級建築士取得後','大学建築学科卒のみ'], tip:'2級建築施工管理技士の第一次検定は17歳以上であれば受験可能（令和3年制度改正後）。まず第一次から挑戦しよう。' },
+      { q:'2級建築施工管理技士を取得すると何の技術者になれるか？', a:1, choices:['監理技術者','主任技術者','専任の監理技術者','現場代理人（資格不要）'], tip:'2級取得で主任技術者として現場に配置できる。一般建設業の工事であればすべての工事で対応可能。' },
+      { q:'「工程管理」で「バーチャート工程表」の特徴は？', a:2, choices:['作業の相互関係が明確','費用管理に優れる','各作業の開始・終了日程が棒グラフで一目でわかる','人員配置の最適化に向く'], tip:'バーチャート（横線式工程表）は各作業の期間を棒グラフで表す。簡単で見やすいが作業の相互依存関係は不明確。' },
+      { q:'「品質管理」でQCDとは何の略か？', a:3, choices:['Quick Clean Design','Quality Control Data','Quantity Cost Duration','Quality（品質）Cost（費用）Delivery（工期）'], tip:'QCDはQuality（品質）・Cost（費用）・Delivery（工期・納期）の頭文字。施工管理の三大目標を表す。' },
+      { q:'「ネットワーク工程表」で「クリティカルパス」とは？', a:0, choices:['最も時間のかかる作業経路（工期を決定する経路）','費用が最も高い作業','最も人員が必要な作業','危険度が最も高い作業'], tip:'クリティカルパスは工程中の最長経路。この経路上の作業が遅れると工期全体が遅延する。施工管理の核心。' },
+      { q:'「施工計画書」に記載すべき主な内容は？', a:1, choices:['設計図と同じ内容','施工方法・工程・品質管理・安全管理・環境対策など'], tip:'施工計画書は工事の実施計画書。施工方法・工程表・品質管理計画・安全管理計画・環境対策などを記載する。' },
+      { q:'建設業法で「一括下請負（丸投げ）」が原則として禁止されている理由は？', a:2, choices:['費用が増加するから','工期が延びるから','施工責任が不明確になり品質・安全管理に問題が生じるから','法律で決まっているだけで理由は不明'], tip:'一括下請負（丸投げ）は施工責任の所在が不明確になり、品質・安全管理の低下を招く。建設業法で原則禁止。' },
+      { q:'「安全管理」でKY活動の「KY」は何の略か？', a:3, choices:['今日よろしく','危険予防','Keep Young','危険予知（Kiken Yochi）'], tip:'KY活動はKiken Yochi（危険予知）活動の略。作業前に危険を予測し対策を話し合う安全活動。現場の基本。' },
+      { q:'「仮設計画」で「共通仮設」に含まれないものは？', a:0, choices:['各作業のための専用足場','仮設電力・給排水','仮設道路・ゲート','現場事務所・仮設トイレ'], tip:'共通仮設は全工事共通で使う仮設設備（電力・水道・道路・事務所等）。各専門工事の専用足場は直接仮設に含まれる。' },
+      { q:'「原価管理」の目的は？', a:1, choices:['設計費用を削減すること','実行予算内に収めて利益を確保すること','材料費を最小化すること','人件費をゼロにすること'], tip:'原価管理は実行予算に基づき工事費用を管理し、目標利益を確保すること。予算・実績の差異を随時確認・是正する。' },
+    ]
+  },
+  {
+    id:'architect2', icon:'📐', name:'二級建築士', name_en:'2nd-class Architect',
+    color:'#8b7a6a', desc:'設計・監理ができる建築士資格。',
+    questions:[
+      { q:'二級建築士が設計できる建物の規模制限は？', a:0, choices:['木造：高さ13m以下・軒高9m以下、RC造：延床300㎡以下など','制限なし','木造のみ設計可能','2階建て以下のみ'], tip:'二級建築士は一定規模以下の建物を設計・監理できる。木造は高さ13m・軒高9m以下、RC・S造は延床300㎡以下が目安。' },
+      { q:'二級建築士試験の「設計製図の試験」で求められることは？', a:1, choices:['CADを使った図面作成','課題に沿った平面図・立面図・断面図などの手書き作成','3Dモデリング','積算（材料の数量計算）'], tip:'設計製図試験は手書きでの図面作成。平面図・立面図・断面図・面積表などを指定時間内に完成させる。' },
+      { q:'「建蔽率（けんぺいりつ）」とは何か？', a:2, choices:['建物の高さ制限','床面積の合計','敷地面積に対する建築面積の割合','容積率と同じもの'], tip:'建蔽率は敷地面積に対する建築面積（建物の水平投影面積）の割合。用途地域ごとに上限が定められている。' },
+      { q:'「容積率（ようせきりつ）」とは何か？', a:3, choices:['建物の体積の割合','構造の密度','高さ制限の割合','敷地面積に対する延べ床面積の割合'], tip:'容積率は敷地面積に対する延べ床面積（各階床面積の合計）の割合。都市部では容積率が建物規模を大きく制約する。' },
+      { q:'「防火地域」で建てられる木造建築の条件は？', a:0, choices:['延べ面積100㎡以下かつ地階を除く階数が2以下','条件なく建てられる','木造は不可','3階建てまで可能'], tip:'防火地域での木造は延べ100㎡以下・2階以下に限定。それを超える場合は耐火建築物・準耐火建築物にする必要がある。' },
+      { q:'「採光」の建築基準法の規定で居室に必要な窓の面積は？', a:1, choices:['床面積の1/5以上','床面積の1/7以上（住宅）','床面積の1/10以上','制限なし'], tip:'住宅の居室の採光窓は床面積の1/7以上が必要（建築基準法第28条）。採光補正係数を使って有効採光面積を計算する。' },
+      { q:'「シックハウス症候群」対策として建築基準法が規制する物質は？', a:2, choices:['CO2','アスベスト','ホルムアルデヒド・クロルピリホス','鉛'], tip:'建築基準法ではホルムアルデヒド（F☆☆☆☆表示）とクロルピリホスの使用を規制。換気設備の設置も義務付けている。' },
+      { q:'「耐震等級3」とはどの程度の地震に耐えられる水準か？', a:3, choices:['阪神淡路大震災レベルに耐える','東日本大震災レベルに耐える','建築基準法の1.25倍の地震力に耐える','建築基準法の1.5倍の地震力に耐える'], tip:'耐震等級3は建築基準法（等級1）の1.5倍の地震力に耐える水準。消防署・警察署などの重要施設に相当するレベル。' },
+      { q:'二級建築士の受験資格（学科試験）で実務経験が必要なのはどの場合か？', a:0, choices:['高校・専修学校（建築系以外）卒業者など学歴により実務経験が必要','全員実務経験が必要','実務経験は全く不要','大学院卒のみ実務経験が必要'], tip:'二級建築士の受験資格は学歴により異なる。建築系大学卒は実務経験不要で受験可。建築系以外は実務経験が必要。' },
+      { q:'「バリアフリー」設計で車いす使用者に必要な廊下の有効幅員は？', a:1, choices:['600mm以上','780mm以上（1人）・1,200mm以上（すれ違い）','1,000mm以上','500mm以上'], tip:'車いす1台が通る廊下の有効幅員は780mm以上、すれ違いには1,200mm以上必要。バリアフリー法・高齢者住宅の設計基準。' },
+    ]
+  },
+  {
+    id:'tokutei', icon:'🌏', name:'特定技能 完全攻略', name_en:'Specified Skilled Worker Guide',
+    color:'var(--midori)', desc:'1号・2号の違い・要件・権利を完全理解。',
+    questions:[
+      { q:'特定技能1号と2号の最大の違いは？', a:2, choices:['給与の差','日本語能力の要件','在留期間と家族帯同の可否','働ける業種の数'], tip:'1号：在留上限5年・家族帯同不可。2号：在留期間の上限なし・家族帯同可。この差は非常に大きい。' },
+      { q:'特定技能1号の建設分野で必要な日本語能力は？', a:0, choices:['日本語能力試験（JLPT）N4以上または国際交流基金日本語基礎テスト合格','JLPT N2以上','日本語能力試験不要','JLPT N5以上'], tip:'建設分野の特定技能1号にはJLPT N4以上か国際交流基金日本語基礎テスト（JFT-Basic）合格が必要。' },
+      { q:'特定技能外国人を雇用できる企業の条件は？', a:1, choices:['条件なし','建設業許可を持ち、建設キャリアアップシステム（CCUS）に登録していること等'], tip:'特定技能外国人を雇用する建設企業は建設業許可・CCUS登録・受入計画認定などの条件を満たす必要がある。' },
+      { q:'「建設キャリアアップシステム（CCUS）」の目的は？', a:2, choices:['建設会社の会計管理','工事の工程管理','技能者の就業履歴・保有資格を蓄積し処遇改善につなげるシステム','材料の品質管理'], tip:'CCUSは技能者個人のICカードで就業履歴・資格・技能レベルを蓄積するシステム。経験に応じた処遇改善が目的。' },
+      { q:'特定技能1号から2号へ移行するための条件は？', a:3, choices:['日本語N1合格','3年の在留','日本人との結婚','所定の技能試験合格 + 一定の実務経験'], tip:'特定技能2号への移行には所定の技能試験（建設分野：建築大工技能士1級等）合格と実務経験が必要。' },
+      { q:'特定技能外国人の賃金について正しいのは？', a:0, choices:['同等業務の日本人と同等以上の賃金が義務','最低賃金を満たせば良い','外国人は賃金規制なし','最低賃金の70%でも良い'], tip:'特定技能外国人は同等の業務に従事する日本人と「同等以上の賃金」を支払う義務がある。差別的な低賃金は違法。' },
+      { q:'「登録支援機関」の役割は？', a:1, choices:['技能試験を実施する機関','特定技能外国人の生活・就労支援を受入企業から委託される機関','ビザを発行する機関','労働基準監督署の別名'], tip:'登録支援機関は生活オリエンテーション・住居確保支援・相談対応など特定技能外国人の支援業務を担う機関。' },
+      { q:'特定技能1号の在留資格で働ける期間の上限は？', a:2, choices:['3年','無制限','通算5年','10年'], tip:'特定技能1号は通算5年が在留上限。ただし特定技能2号に移行すれば上限なく在留更新が可能になる。' },
+      { q:'特定技能外国人が転職できる条件は？', a:3, choices:['転職は一切不可','雇用主の許可が必要','3年働いた後のみ可能','同じ業種内であれば自由に転職可能'], tip:'特定技能外国人は同一業種（建設なら建設）内であれば転職の自由がある。雇用主に縛られない。これが技能実習との大きな違い。' },
+      { q:'技能実習から特定技能1号へ移行する際に試験が免除されるのは？', a:0, choices:['技能実習2号を良好に修了した者','技能実習1号修了者','全員免除','日本語N3以上保持者'], tip:'技能実習2号を良好に修了した者は特定技能1号への移行時に技能試験・日本語試験が免除される。スムーズな移行が可能。' },
+    ]
+  },
+];
+
+// ════ 資格道場 ロジック ════
+let skExamId='', skQ=0, skScore=0, skHP=3, skAnswered=false, skQuestions=[];
+
+function initShikaku() {
+  const list = document.getElementById('shikaku-list');
+  list.innerHTML = '';
+  SHIKAKU_EXAMS.forEach(exam => {
+    const btn = document.createElement('div');
+    btn.className = 'stage-btn';
+    btn.style.borderLeft = `4px solid ${exam.color}`;
+    btn.innerHTML = `
+      <div class="stage-num-badge" style="font-size:22px;">${exam.icon}</div>
+      <div class="stage-info">
+        <h3>${currentLang==='en' ? exam.name_en : exam.name}</h3>
+        <p>${exam.desc} / ${exam.questions.length}問</p>
+      </div>
+      <span class="stage-clear">▶</span>
+    `;
+    btn.onclick = () => skStart(exam.id);
+    list.appendChild(btn);
+  });
+}
+
+function skStart(id) {
+  const exam = SHIKAKU_EXAMS.find(e => e.id===id);
+  if (!exam) return;
+  skExamId=id; skQ=0; skScore=0; skHP=3; skAnswered=false;
+  skQuestions = shuffleArray(exam.questions);
+
+  document.getElementById('shikaku-select').style.display='none';
+  document.getElementById('shikaku-battle').style.display='block';
+  document.getElementById('shikaku-result').style.display='none';
+  document.getElementById('sk-exam-name').textContent = exam.name;
+  document.getElementById('sk-monster').textContent = exam.icon;
+  document.getElementById('sk-monster').style.fontSize = '56px';
+  document.getElementById('sk-player-name').textContent = `🎓 ${exam.name} 受験生`;
+  document.getElementById('sk-enemy-hp').style.width='100%';
+  document.getElementById('sk-hp-fill').style.width='100%';
+  document.getElementById('sk-hp-fill').className='player-hp-fill';
+  document.getElementById('sk-hp-num').textContent='3';
+  document.getElementById('sk-score-num').textContent='0';
+  document.getElementById('sk-exp-fill').style.width='0%';
+  document.getElementById('sk-tip-win').classList.remove('show');
+  document.getElementById('sk-next-btn').classList.remove('show');
+  document.getElementById('sk-cmd-win').style.display='none';
+  document.getElementById('sk-q-win').style.display='none';
+  document.getElementById('sk-msg').textContent = `${exam.name}の試験開始！`;
+  setTimeout(() => skRender(), 1200);
+}
+
+function skRender() {
+  if (skQ >= skQuestions.length) { skEnd(true); return; }
+  const q = skQuestions[skQ];
+  skAnswered = false;
+  document.getElementById('sk-badge').textContent = `Q${skQ+1}/${skQuestions.length}`;
+  document.getElementById('sk-enemy-hp').style.width = ((skQuestions.length-skQ)/skQuestions.length*100)+'%';
+  document.getElementById('sk-q-text').innerHTML = currentLang==='ja' ? addRuby(q.q) : q.q;
+  document.getElementById('sk-q-win').style.display='block';
+  const cmdWin = document.getElementById('sk-cmd-win');
+  cmdWin.innerHTML=''; cmdWin.style.display='grid';
+  const idx = shuffleArray([0,1,2,3]);
+  const newCorrect = idx.indexOf(q.a);
+  idx.forEach((origIdx, dispIdx) => {
+    const btn = document.createElement('button');
+    btn.className='battle-cmd';
+    btn.innerHTML=`<span class="cmd-letter">${['A','B','C','D'][dispIdx]}</span>${q.choices[origIdx]}`;
+    btn.onclick=()=>skAnswer(dispIdx, newCorrect, q.tip);
+    cmdWin.appendChild(btn);
+  });
+  document.getElementById('sk-tip-win').classList.remove('show');
+  document.getElementById('sk-next-btn').classList.remove('show');
+  document.getElementById('sk-msg').textContent='正しい答えを選べ！';
+}
+
+function skAnswer(i, correctIdx, tip) {
+  if (skAnswered) return;
+  skAnswered=true;
+  const btns = document.querySelectorAll('#sk-cmd-win .battle-cmd');
+  btns[correctIdx].classList.add('correct');
+  if (i===correctIdx) {
+    skScore++;
+    document.getElementById('sk-score-num').textContent=skScore;
+    document.getElementById('sk-exp-fill').style.width=(skScore/skQuestions.length*100)+'%';
+    const dmg=document.getElementById('sk-damage');
+    dmg.textContent='CORRECT! +EXP'; dmg.className='damage-popup show';
+    setTimeout(()=>dmg.className='damage-popup',900);
+    document.getElementById('sk-msg').textContent='✅ 正解！';
+  } else {
+    btns[i].classList.add('wrong');
+    skHP--;
+    document.getElementById('sk-hp-fill').style.width=(skHP/3*100)+'%';
+    if(skHP<=1) document.getElementById('sk-hp-fill').className='player-hp-fill low';
+    document.getElementById('sk-hp-num').textContent=skHP;
+    const miss=document.getElementById('sk-miss');
+    miss.className='miss-popup show'; setTimeout(()=>miss.className='miss-popup',900);
+    document.getElementById('sk-msg').textContent='❌ 不正解...';
+    if(skHP<=0){
+      document.getElementById('sk-tip-text').innerHTML=addRuby(tip);
+      document.getElementById('sk-tip-win').classList.add('show');
+      setTimeout(()=>skEnd(false),1200); return;
+    }
+  }
+  document.getElementById('sk-tip-text').innerHTML=currentLang==='ja'?addRuby(tip):tip;
+  document.getElementById('sk-tip-win').classList.add('show');
+  document.getElementById('sk-next-btn').classList.add('show');
+  document.getElementById('sk-next-btn').textContent=skQ+1>=skQuestions.length?'📜 結果発表 ▶':'次の問題 ▶';
+  setTimeout(()=>document.getElementById('sk-next-btn').scrollIntoView({behavior:'smooth',block:'center'}),200);
+}
+
+function skNext() {
+  skQ++;
+  if(skQ>=skQuestions.length) skEnd(true);
+  else {
+    document.getElementById('sk-tip-win').classList.remove('show');
+    document.getElementById('sk-next-btn').classList.remove('show');
+    skRender();
+  }
+}
+
+function skEnd(pass) {
+  document.getElementById('shikaku-battle').style.display='none';
+  document.getElementById('shikaku-result').style.display='block';
+  const pct = skScore/skQuestions.length;
+  const passed = pct >= 0.6;
+  document.getElementById('sk-end-icon').textContent = passed?'🎓':'📚';
+  document.getElementById('sk-end-title').textContent = passed?'合格ライン達成！':'もう一度挑戦！';
+  document.getElementById('sk-end-title').className = 'battle-end-title '+(passed?'win':'lose');
+  document.getElementById('sk-end-stats').innerHTML =
+    `正解: <span>${skScore}</span> / ${skQuestions.length}問<br>` +
+    `正答率: <span>${Math.round(pct*100)}%</span><br>` +
+    (pct===1?'<span>🌟 PERFECT!</span>':pct>=0.8?'<span>💪 優秀！</span>':'');
+  setTimeout(()=>document.getElementById('sk-end-exp').style.width=(pct*100)+'%',600);
+}
+
+function skBackToSelect() {
+  document.getElementById('shikaku-select').style.display='block';
+  document.getElementById('shikaku-battle').style.display='none';
+  document.getElementById('shikaku-result').style.display='none';
+}
 
 // ════ QUIZ LOGIC ════
 
@@ -2083,6 +2438,7 @@ window.addEventListener('DOMContentLoaded', ()=>{
   bbInit();
   initDict();
   initCareer();
+  initShikaku();
 });
 </script>
 </body>
