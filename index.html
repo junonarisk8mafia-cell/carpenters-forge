@@ -615,6 +615,12 @@ body { display:flex; flex-direction:column; }
   padding:4px 0; opacity:0.6;
 }
 
+/* ── KOZO BATTLE ── */
+#kz-svg rect, #kz-svg line[id] { fill:#4a3a28; stroke:#6a5540; stroke-width:1; transition:fill .2s; }
+#kz-svg line[id] { stroke:#4a3a28; }
+#kz-svg .kz-hl { fill:var(--aka) !important; stroke:#ff6b5b !important; }
+#kz-svg line.kz-hl { stroke:var(--aka) !important; }
+
 /* ── BLUEPRINT BATTLE ── */
 .bb-canvas-wrap {
   position:relative; margin:16px;
@@ -730,6 +736,7 @@ rt { font-size: 0.55em; color: var(--hinoki); letter-spacing: 0.05em; }
     <button class="nav-tab" onclick="showPage('dict')">辞典</button>
     <button class="nav-tab" onclick="showPage('career')">CAREER</button>
     <button class="nav-tab" onclick="showPage('shikaku')">🎓 資格道場</button>
+    <button class="nav-tab" onclick="showPage('kozo')">🏠 構造図</button>
   </div>
   <div class="lang-toggle">
     <button class="lang-btn active" id="btn-ja" onclick="setLang('ja')">🇯🇵</button>
@@ -746,7 +753,7 @@ rt { font-size: 0.55em; color: var(--hinoki); letter-spacing: 0.05em; }
     <p class="hero-sub">// 大工の現場日本語 × 技能 RPG</p>
     <div class="stat-row">
       <div class="stat-item"><div class="stat-num" id="stat-stages">8</div><div class="stat-label">STAGES</div></div>
-      <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">GAMES</div></div>
+      <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">GAMES</div></div>
       <div class="stat-item"><div class="stat-num" id="stat-slang">30+</div><div class="stat-label">SLANG</div></div>
       <div class="stat-item"><div class="stat-num" id="stat-shikaku">5</div><div class="stat-label">資格道場</div></div>
     </div>
@@ -792,6 +799,11 @@ rt { font-size: 0.55em; color: var(--hinoki); letter-spacing: 0.05em; }
       <div class="mod-icon">🎓</div>
       <div class="mod-title">資格道場</div>
       <div class="mod-desc">技能士・施工管理・建築士・特定技能</div>
+    </div>
+    <div class="mod-card c-red" onclick="showPage('kozo')">
+      <div class="mod-icon">🏠</div>
+      <div class="mod-title">KOZO BATTLE</div>
+      <div class="mod-desc">木造住宅の部材名称を当てろ</div>
     </div>
   </div>
 </div>
@@ -1009,6 +1021,60 @@ rt { font-size: 0.55em; color: var(--hinoki); letter-spacing: 0.05em; }
   </div>
 </div>
 
+<!-- ════════ KOZO BATTLE ════════ -->
+<div id="page-kozo" class="page">
+  <div class="game-banner">
+    <h2>🏠 KOZO BATTLE</h2>
+    <p>赤く光る部材の名前を当てろ — 木造住宅の構造を覚える</p>
+  </div>
+  <div class="bb-score">スコア: <span id="kz-score">0</span> / 問題: <span id="kz-qnum">0</span>/10</div>
+  <div class="bb-canvas-wrap" id="kz-svg-wrap" style="background:var(--tan); border-radius:10px; margin:10px 16px; padding:8px;">
+    <svg id="kz-svg" viewBox="0 0 600 430" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; display:block;">
+      <!-- 地面 -->
+      <line x1="0" y1="402" x2="600" y2="402" stroke="#7A6A5A" stroke-width="2"/>
+      <!-- 屋根勾配ライン -->
+      <line x1="300" y1="12" x2="38" y2="112" stroke="#5a4a38" stroke-width="3"/>
+      <line x1="300" y1="12" x2="562" y2="112" stroke="#5a4a38" stroke-width="3"/>
+      <!-- 部材 -->
+      <rect id="kz-kiso" x="70" y="372" width="44" height="30"/>
+      <rect id="kz-kiso2" x="486" y="372" width="44" height="30" class="kz-pair"/>
+      <rect id="kz-dodai" x="70" y="356" width="460" height="16"/>
+      <rect id="kz-yukazuka" x="285" y="384" width="14" height="18"/>
+      <rect id="kz-oobiki" x="150" y="374" width="300" height="12"/>
+      <rect id="kz-neda" x="160" y="364" width="12" height="10"/>
+      <rect id="kz-neda2" x="220" y="364" width="12" height="10" class="kz-pair"/>
+      <rect id="kz-neda3" x="280" y="364" width="12" height="10" class="kz-pair"/>
+      <rect id="kz-neda4" x="340" y="364" width="12" height="10" class="kz-pair"/>
+      <rect id="kz-neda5" x="400" y="364" width="12" height="10" class="kz-pair"/>
+      <rect id="kz-yukaita" x="150" y="357" width="300" height="7"/>
+      <rect id="kz-tooshibashira" x="88" y="105" width="16" height="251"/>
+      <rect id="kz-kudabashira" x="496" y="216" width="16" height="140"/>
+      <rect id="kz-doosashi" x="88" y="200" width="424" height="16"/>
+      <rect id="kz-koyabari" x="88" y="90" width="424" height="15"/>
+      <rect id="kz-koyazuka" x="293" y="28" width="14" height="62"/>
+      <rect id="kz-munagi" x="288" y="14" width="24" height="14"/>
+      <rect id="kz-moya" x="168" y="52" width="16" height="14"/>
+      <rect id="kz-moya2" x="416" y="52" width="16" height="14" class="kz-pair"/>
+      <rect id="kz-nokigeta" x="68" y="88" width="20" height="17"/>
+      <rect id="kz-nokigeta2" x="512" y="88" width="20" height="17" class="kz-pair"/>
+      <line id="kz-taruki" x1="300" y1="16" x2="46" y2="114" stroke-width="6"/>
+      <line id="kz-taruki2" x1="300" y1="16" x2="554" y2="114" stroke-width="6" class="kz-pair"/>
+    </svg>
+  </div>
+  <div class="bb-q-wrap">
+    <div class="bb-q" id="kz-q">赤くハイライトされた部材の名前は？</div>
+    <div class="bb-choices" id="kz-choices"></div>
+    <div class="hint-box" id="kz-tip" style="display:none; margin-top:10px;"></div>
+  </div>
+  <div id="kz-result" style="display:none;">
+    <div class="result-screen">
+      <div class="big-num" id="kz-final">0</div>
+      <p>/ 10問正解</p>
+      <button class="btn-primary" onclick="kzInit()">もう一度</button>
+    </div>
+  </div>
+</div>
+
 <!-- ════════ 辞典 ════════ -->
 <div id="page-dict" class="page">
   <div class="dict-search">
@@ -1132,7 +1198,7 @@ function isCleared(kind, id) {
 }
 
 // ════ PAGE NAVIGATION ════
-const pages = ['home','quiz','slang','kiwari','workshop','blueprint','dict','career','shikaku'];
+const pages = ['home','quiz','slang','kiwari','workshop','blueprint','dict','career','shikaku','kozo'];
 function showPage(id) {
   pages.forEach(p => {
     document.getElementById('page-'+p).classList.remove('active');
@@ -1141,7 +1207,7 @@ function showPage(id) {
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.bottom-tab').forEach(t => t.classList.remove('active'));
   const navTabs = document.querySelectorAll('.nav-tab');
-  const pageMap = {home:0,quiz:1,slang:2,kiwari:3,workshop:4,blueprint:5,dict:6,career:7,shikaku:8};
+  const pageMap = {home:0,quiz:1,slang:2,kiwari:3,workshop:4,blueprint:5,dict:6,career:7,shikaku:8,kozo:9};
   if (navTabs[pageMap[id]]) navTabs[pageMap[id]].classList.add('active');
   const botMap = {home:0,quiz:1,slang:2,kiwari:3,dict:4,shikaku:5};
   if (botMap[id] !== undefined) document.querySelectorAll('.bottom-tab')[botMap[id]].classList.add('active');
@@ -1588,6 +1654,47 @@ const QUESTIONS_EXTRA2 = {
 Object.keys(QUESTIONS_EXTRA2).forEach(id => {
   if (QUESTIONS[id]) {
     QUESTIONS[id] = [...QUESTIONS[id], ...QUESTIONS_EXTRA2[id]];
+  }
+});
+
+// ════ EXTRA QUESTIONS 3（大工道具教本より）════
+const QUESTIONS_EXTRA3 = {
+  2: [
+    { q:'ゲンノウの2つの打撃面のうち、少し膨らんだ凸面は何に使うか？', a:1, choices:['クギの打ち始め','打ち込みの最後や木殺し（木材表面を傷つけずに打つ）','ノミを叩く専用面','使わない飾りの面'], tip:'ゲンノウは片面が平ら・片面がわずかに凸。平面でクギを打ち、最後は凸面で打つと木材表面に傷（玄翁の跡）が付かない。凸面はホゾの木殺しにも使う。' },
+    { q:'二枚カンナの「裏金（うらがね）」の役割は？', a:2, choices:['刃を固定する金具','台の摩耗を防ぐ','削り屑を折り曲げて逆目掘れを防ぐ','刃を保護するカバー'], tip:'裏金は刃のすぐ上に重ねる第二の刃。削り屑を折り曲げることで逆目方向でも表面が荒れにくくなる。現代の平カンナはほぼ二枚カンナ。' },
+    { q:'日本のノコギリの切り方の特徴は？', a:0, choices:['手前に引いて切る','押して切る','回転させて切る','上下に叩いて切る'], tip:'日本のノコギリは引く時に切れる「引き挽き」。刃を薄くでき、切り口が精密になる。西洋のノコギリは押して切るのが主流。' },
+    { q:'ノコギリの「アサリ」とは何か？', a:3, choices:['柄の握り部分','刃の枚数','ノコ身の厚み','歯を左右交互に振り分けた出っ張り'], tip:'アサリは歯を左右に振り分けたもの。切り溝（挽き道）がノコ身より広くなり、摩擦や目詰まりを減らしてスムーズに挽ける。' },
+    { q:'砥石で刃物を研ぐ正しい順序は？', a:1, choices:['仕上げ砥→中砥→荒砥','荒砥→中砥→仕上げ砥','中砥のみで十分','どの順でも同じ'], tip:'研ぎは粒度の粗い順。荒砥（#120〜600）で形を作り、中砥（#800〜2000）で研ぎ、仕上げ砥（#3000〜）で刃先を鏡面に仕上げる。' },
+  ],
+  3: [
+    { q:'ノミの柄やカンナの台に使われる、国産材で最も重く硬い木は？', a:2, choices:['スギ','キリ','カシ','ヒノキ'], tip:'カシ（樫）は建築に使う国産木材の中で最も重く、非常に硬くて強い。ノミの柄・カンナの台・継手仕口の栓に使われる。' },
+    { q:'国産材で最も軽く、タンスや琵琶に使われる木は？', a:0, choices:['キリ','カシ','ケヤキ','マツ'], tip:'キリ（桐）は木工に使う国産材で最も軽い。調湿性に優れタンスの定番材。ノコギリの柄にも使われる。' },
+    { q:'大黒柱や彫刻に使われる、硬くて木目が美しい広葉樹は？', a:1, choices:['スギ','ケヤキ','キリ','マツ'], tip:'ケヤキ（欅）は硬くて丈夫で重く、材の性質が均一で木目が美しい。荷重がかかる大黒柱・指鴨居・彫刻に使われる高級材。' },
+    { q:'梁や敷居に使われる、曲げ強度が大きい針葉樹は？', a:3, choices:['キリ','ヒノキ','スギ','マツ'], tip:'マツ（松）は重さ当たりの曲げ強度が大きく、比較的硬くて丈夫。曲げの力がかかる梁・貫・敷居に使われる。' },
+    { q:'芯持ち柱の見えない面に入れる「背割り」の目的は？', a:2, choices:['軽量化のため','運搬しやすくするため','乾燥による割れを一箇所に集中させ化粧面の割れを防ぐ','虫を防ぐため'], tip:'芯持材は乾燥収縮で割れが出やすい。あらかじめ背割り（切り込み）を入れておくと、割れが背割りに集中し、見える面がきれいに保てる。' },
+    { q:'合板（ごうはん）の構造の特徴は？', a:0, choices:['単板を繊維方向が直交するように積層接着している','繊維方向を揃えて積層している','木材チップを固めている','一枚板を薄く削っただけ'], tip:'合板は単板（ベニヤ）を一枚ごとに繊維方向を直交させて積層接着。乾燥収縮が少なく、方向による強度差が小さい。' },
+  ],
+  4: [
+    { q:'1間（いっけん）は何尺か？', a:1, choices:['4尺','6尺','8尺','10尺'], tip:'1間＝6尺＝約181.8cm。畳の長辺やモジュールの基本。現場略算では1間＝180cmで計算することも多い。' },
+    { q:'1坪はどのくらいの広さか？', a:2, choices:['1m×1m','1尺×1尺','1間×1間（約3.3㎡）','2間×2間'], tip:'1坪＝1間×1間＝約3.3㎡。畳2枚分の広さ。不動産や建築で今も使われる基本単位。' },
+    { q:'サシガネの裏目（角目）の目盛りは表目の何倍か？', a:0, choices:['√2倍（約1.414倍）','2倍','1/2倍','π倍'], tip:'裏目（角目）は表目の√2倍の目盛り。丸太の直径に当てるだけで、取れる角材の一辺（内接する正方形）が直接読める。丸目は円周率目盛りで円周が読める。' },
+    { q:'「けがき」とはどんな作業か？', a:3, choices:['木材を削る作業','木材を洗う作業','塗装の作業','加工の目安となる線を引く作業'], tip:'けがき（罫書き）は鉛筆・墨サシなどで加工の目安となる線を引くこと。「罫」は一定の間隔で引いた線の意味。' },
+    { q:'「仕上げ代（しあげしろ）」とは何か？', a:1, choices:['仕上げ作業の工賃','仕上げで削り取るための余分な寸法','仕上げに使う道具','完成後の検査項目'], tip:'仕上げ代は材料の仕上げ時に削り取る余分のこと。切断や荒加工の段階では仕上げ代を見込んで少し大きめに取る。' },
+  ],
+  5: [
+    { q:'土台や母屋に最も一般的に使われる継手は？', a:2, choices:['台持継','追掛大栓継','腰掛鎌継（こしかけかまつぎ）','寄蟻'], tip:'腰掛鎌継は鎌形のホゾを腰掛けに載せる継手で、母屋や土台に一般的に使われる。' },
+    { q:'柱位置で梁を継ぐのに使う、継手面が水平な継手は？', a:0, choices:['台持継（だいもちつぎ）','蟻継ぎ','本実','相欠き'], tip:'台持継は継手の面が水平なので、柱位置で梁を継ぐのに使う。上木と下木を重ねて組む。' },
+    { q:'梁と束の仕口「寄蟻（よせあり）」の組み方は？', a:1, choices:['上から叩き込むだけ','四角い穴に蟻を入れてから横にスライドさせて台形の穴に納める','接着剤で固定する','ボルトで締める'], tip:'寄蟻はいったん四角い穴に蟻（台形ホゾ）を差し込み、部材を横にスライドさせて台形の穴に入れ、抜けなくする仕口。' },
+    { q:'柱と梁の仕口でホゾを貫通させて反対側から打つ栓を何と言うか？', a:3, choices:['大栓','クサビ','ダボ','鼻栓（はなせん）'], tip:'ホゾを柱に貫通させ、反対側に通す栓が鼻栓。「ホゾ差し鼻栓止め」は柱と梁の代表的な仕口。' },
+    { q:'クギの長さを選ぶ基準は、打ち付ける板の厚さの何倍か？', a:2, choices:['1倍','1.5倍','2.5〜3倍','5倍以上'], tip:'クギは打ち付ける板厚の2.5〜3倍の長さが基準。ビスは2〜3倍。短すぎると保持力が足りない。' },
+    { q:'クギ打ち前に下穴をあける理由として正しくないのは？', a:1, choices:['位置を正確にするため','クギを長持ちさせるため','打ち込みやすくするため','材の割れを防ぐため'], tip:'下穴の目的は①クギを打つ位置を正確に定める②打ち込みやすくする③板材の端が割れるのを防ぐ、の3つ。' },
+  ],
+};
+
+// 追加問題3をマージ
+Object.keys(QUESTIONS_EXTRA3).forEach(id => {
+  if (QUESTIONS[id]) {
+    QUESTIONS[id] = [...QUESTIONS[id], ...QUESTIONS_EXTRA3[id]];
   }
 });
 
@@ -2489,6 +2596,89 @@ function bbRestart() {
   bbRender();
 }
 
+// ════ KOZO BATTLE ════
+const KZ_DATA = [
+  { id:'kz-kiso', name:'基礎', yomi:'きそ', tip:'建物の荷重を地盤に伝えるコンクリートの土台部分。' },
+  { id:'kz-dodai', name:'土台', yomi:'どだい', tip:'基礎の上に横たえ、柱を受ける横架材。腐りにくいヒノキ・クリなどを使う。' },
+  { id:'kz-yukazuka', name:'床束', yomi:'ゆかづか', tip:'大引を下から支える短い柱。' },
+  { id:'kz-oobiki', name:'大引', yomi:'おおびき', tip:'根太を受ける床下の横架材。床束で支える。' },
+  { id:'kz-neda', name:'根太', yomi:'ねだ', tip:'床板を直接受ける小さめの横材。大引の上に等間隔に並べる。' },
+  { id:'kz-yukaita', name:'床板', yomi:'ゆかいた', tip:'根太の上に張る床の板材。' },
+  { id:'kz-tooshibashira', name:'通し柱', yomi:'とおしばしら', tip:'土台から軒まで1本で通った柱。建物の構造の要。' },
+  { id:'kz-kudabashira', name:'管柱', yomi:'くだばしら', tip:'胴差などで中断され、各階ごとに立てる柱。' },
+  { id:'kz-doosashi', name:'胴差', yomi:'どうさし', tip:'1階と2階の間で建物の胴を巡る横架材。2階の床を受ける。' },
+  { id:'kz-koyabari', name:'小屋梁', yomi:'こやばり', tip:'小屋組（屋根の骨組み）を受ける水平の梁。' },
+  { id:'kz-koyazuka', name:'小屋束', yomi:'こやづか', tip:'小屋梁の上に立てて母屋や棟木を支える短い柱。' },
+  { id:'kz-munagi', name:'棟木', yomi:'むなぎ', tip:'屋根の一番高い所に通す横架材。棟木を収めると「上棟」。' },
+  { id:'kz-moya', name:'母屋', yomi:'もや', tip:'棟木と軒桁の間で垂木を支える横架材。' },
+  { id:'kz-nokigeta', name:'軒桁', yomi:'のきげた', tip:'柱の頂部で垂木を受ける、軒に沿った横架材。' },
+  { id:'kz-taruki', name:'垂木', yomi:'たるき', tip:'棟木から軒桁へ屋根勾配なりに架ける斜め材。屋根下地を受ける。' },
+];
+let kzOrder=[], kzIndex=0, kzScore=0, kzAnswered=false;
+
+function kzHighlight(id) {
+  document.querySelectorAll('#kz-svg .kz-hl').forEach(el=>el.classList.remove('kz-hl'));
+  const el=document.getElementById(id);
+  if(el) el.classList.add('kz-hl');
+  // ペア部材（左右対称・複数個あるもの）も光らせる
+  for(let i=2;i<=5;i++){
+    const p=document.getElementById(id+i);
+    if(p) p.classList.add('kz-hl');
+  }
+}
+
+function kzInit() {
+  kzOrder=shuffleArray(KZ_DATA).slice(0,10);
+  kzIndex=0; kzScore=0;
+  document.getElementById('kz-result').style.display='none';
+  document.getElementById('kz-svg-wrap').style.display='block';
+  document.querySelector('#page-kozo .bb-q-wrap').style.display='block';
+  kzRender();
+}
+
+function kzRender() {
+  if(kzIndex>=kzOrder.length){
+    document.getElementById('kz-result').style.display='block';
+    document.getElementById('kz-svg-wrap').style.display='none';
+    document.querySelector('#page-kozo .bb-q-wrap').style.display='none';
+    document.getElementById('kz-final').textContent=kzScore;
+    return;
+  }
+  const d=kzOrder[kzIndex];
+  kzAnswered=false;
+  document.getElementById('kz-score').textContent=kzScore;
+  document.getElementById('kz-qnum').textContent=`${kzIndex+1}/10`;
+  document.getElementById('kz-tip').style.display='none';
+  kzHighlight(d.id);
+  // 選択肢: 正解 + 他からランダム3
+  const others=shuffleArray(KZ_DATA.filter(x=>x.id!==d.id)).slice(0,3);
+  const choices=shuffleArray([d,...others]);
+  const el=document.getElementById('kz-choices');
+  el.innerHTML='';
+  choices.forEach(c=>{
+    const btn=document.createElement('button');
+    btn.className='bb-choice';
+    btn.textContent=`${c.name}（${c.yomi}）`;
+    btn.onclick=()=>kzAnswer(btn, c.id===d.id, d);
+    el.appendChild(btn);
+  });
+}
+
+function kzAnswer(btn, correct, d) {
+  if(kzAnswered) return;
+  kzAnswered=true;
+  document.querySelectorAll('#kz-choices .bb-choice').forEach(b=>{
+    if(b.textContent.startsWith(d.name+'（')) b.classList.add('correct');
+  });
+  if(correct) kzScore++;
+  else btn.classList.add('wrong');
+  document.getElementById('kz-score').textContent=kzScore;
+  const tip=document.getElementById('kz-tip');
+  tip.textContent=`📖 ${d.name}（${d.yomi}）— ${d.tip}`;
+  tip.style.display='block';
+  setTimeout(()=>{kzIndex++;kzRender();},1800);
+}
+
 // ════ SLANG DICTIONARY ════
 const DICT_DATA = [
   {ja:'ゲンノウ',rom:'gennō',en:'Hammer',cat:'工具',desc:'木槌・金槌の総称。「ハンマー」と言っても通じないことがある現場言葉。',ex:'「ゲンノウで打ち込んで」→ ハンマーで打つ'},
@@ -2501,7 +2691,8 @@ const DICT_DATA = [
   {ja:'デンデン',rom:'denden',en:'Gutter hook',cat:'部品',desc:'雨どいを固定する器具。「でんでん」という音から命名。',ex:'「デンデン打ってから雨どい付けて」'},
   {ja:'インゴ',rom:'ingo',en:'45mm / 1.5 sun',cat:'寸法',desc:'一寸五分（45mm）の略。「インゴ角」は45mm角材のこと。尺貫法の略語。',ex:'「インゴ角3本持ってきて」→ 45mm角材を3本'},
   {ja:'ヌキ',rom:'nuki',en:'Nuki board (13×90mm)',cat:'木材',desc:'壁の下地に使う薄い横材（13×90mm）。「貫（ぬき）」の略。',ex:'「ヌキ入れろ」→ 壁下地の横材を施工する'},
-  {ja:'コバ',rom:'koba',en:'Cross-section / Edge',cat:'寸法',desc:'材料の断面・端の部分。「コバ見せろ」は断面を確認するよう求める指示。',ex:'「コバがきれいに切れてるか確認して」'},
+  {ja:'コバ（木端）',rom:'koba',en:'Edge (parallel to grain)',cat:'寸法',desc:'板材の繊維（木目）に平行な方向の狭い側面のこと。繊維に直交する切断面は「木口（こぐち）」と呼び分ける。',ex:'「コバがきれいに切れてるか確認して」'},
+  {ja:'木口（こぐち）',rom:'koguchi',en:'End grain / Cut end',cat:'寸法',desc:'材の繊維（木目）に直交する方向の切断面。年輪が見える端面のこと。木口は水を吸いやすく、カンナ掛けも難しい。',ex:'「木口が割れないように面を取っておけ」'},
   {ja:'サンシゴ',rom:'san-shi-go',en:'3-4-5 method',cat:'技術',desc:'3:4:5の直角三角形の原理で現場で簡単に直角を出す手法。ピタゴラスの定理の実用版。',ex:'「サンシゴで直角出せ」→ 3:4:5の比で直角を確認'},
   {ja:'遊び（やすみ）',rom:'asobi (yasumi)',en:'Day off / No work',cat:'スラング',desc:'「今日は遊びだ」＝仕事がない・休み。ただし材料の「余裕・ガタ」の意味でも使う。文脈を読むことが大切。',ex:'「今日は遊びだ」→ 休みの日'},
   {ja:'遊び（余裕）',rom:'asobi (yoyū)',en:'Allowance / Clearance',cat:'技術',desc:'部材の余裕・隙間・ゆとりのこと。木材の変形を考慮して設ける余裕。',ex:'「ボルト穴に遊びを持たせておけ」→ 穴に余裕を作る'},
@@ -2529,6 +2720,22 @@ const DICT_DATA = [
   {ja:'朝一（あさいち）',rom:'asaichi',en:'First thing in the morning',cat:'スラング',desc:'朝一番・作業開始直後のこと。時間指定の定番表現。',ex:'「朝一で材料搬入するぞ」'},
   {ja:'手間（てま）',rom:'tema',en:'Labor / Daily wage',cat:'労務',desc:'作業にかかる労力・時間のこと。職人の日当は「手間賃」。「手間がかかる」は時間・労力が必要の意。',ex:'「この仕事は手間がかかる」'},
   {ja:'面（めん）を取る',rom:'men wo toru',en:'Chamfer',cat:'技術',desc:'材料の角を斜めや丸く削る加工（面取り）。角の割れ・欠け防止と安全・美観のため。',ex:'「角の面を取っておいて」'},
+  {ja:'ホゾ（枘）',rom:'hozo',en:'Tenon',cat:'継手',desc:'部材の端を細くして相手の穴に差し込む凸部分。差し込む側の穴は「ホゾ穴」。柱と土台・梁の接合の基本形。',ex:'「ホゾがきついから少し払っておけ」'},
+  {ja:'鼻栓（はなせん）',rom:'hanasen',en:'Draw pin (through tenon)',cat:'継手',desc:'柱を貫通させたホゾに反対側から打ち込む栓。ホゾの抜けを防ぐ。柱と梁の仕口「ホゾ差し鼻栓止め」で使う。',ex:'「梁を落としたら鼻栓を打て」'},
+  {ja:'大栓（だいせん）',rom:'daisen',en:'Timber pin / Peg',cat:'継手',desc:'継手部分を貫通させて打ち込む木製の栓。追掛大栓継（おっかけだいせんつぎ）は桁の代表的な継手。栓には硬いカシ材を使う。',ex:'「大栓は両側から打ち込め」'},
+  {ja:'腰掛鎌継（こしかけかまつぎ）',rom:'koshikake-kamatsugi',en:'Lapped gooseneck joint',cat:'継手',desc:'鎌形のホゾを腰掛けに載せてつなぐ継手。土台や母屋に最も一般的に使われる。',ex:'「土台は腰掛鎌継で継いでいけ」'},
+  {ja:'台持継（だいもちつぎ）',rom:'daimochi-tsugi',en:'Scarf joint (beam)',cat:'継手',desc:'継手の面が水平で、柱位置で梁を継ぐのに使う継手。上木と下木を重ねて組む。',ex:'「この梁は柱の上で台持継だ」'},
+  {ja:'寄蟻（よせあり)',rom:'yoseari',en:'Sliding dovetail',cat:'継手',desc:'四角い穴に蟻（台形ホゾ）を差し込んだ後、横にスライドさせて台形の穴に収め、抜けなくする仕口。梁と束の接合に使う。',ex:'「束は寄蟻で納めろ」'},
+  {ja:'本実（ほんざね）',rom:'honzane',en:'Tongue and groove',cat:'継手',desc:'板の側面を凸（メチ）と凹（メチ穴）に加工した板の継手。メチの付根にクギを打つと表からクギが見えない。フローリングの定番。',ex:'「床板は本実加工だからクギは隠せる」'},
+  {ja:'目違い（めちがい）',rom:'mechigai',en:'Stub tenon (joint key)',cat:'継手',desc:'継手・仕口の基本形のひとつ。小さな凸を設けて材のねじれ・ずれを防ぐ。追掛大栓継などに組み込まれる。',ex:'「目違いを入れてねじれを止めろ」'},
+  {ja:'渡り腮（わたりあご）',rom:'watariago',en:'Cogged lap joint',cat:'継手',desc:'交差する横架材どうしを欠き合わせて組む仕口の基本形。梁と桁・母屋と垂木などの交差部に使う。',ex:'「桁と梁は渡り腮で組む」'},
+  {ja:'背割り（せわり）',rom:'sewari',en:'Kerf cut (back split)',cat:'木材',desc:'芯持ち柱の見えない面にあらかじめ入れる切り込み。乾燥収縮による割れを背割りに集中させ、化粧面の割れを防ぐ。',ex:'「化粧柱は背割りを壁側に向けろ」'},
+  {ja:'芯持材・芯去材',rom:'shinmochi-zai / shinsari-zai',en:'Boxed heart / Heart-free timber',cat:'木材',desc:'木目の中心（芯）を含むのが芯持材で、乾燥収縮により割れが出やすい。芯を外した芯去材は割れにくいが大径木から取るので高価。',ex:'「この柱は芯持ちだから背割りが入ってる」'},
+  {ja:'木殺し（きごろし）',rom:'kigoroshi',en:'Wood compression',cat:'技術',desc:'ゲンノウの凸面などで木材の面を叩いてつぶすこと。ホゾを木殺ししてから差すと、後で湿気を吸って膨らみ固く締まる。',ex:'「ホゾを木殺ししてから打ち込め」'},
+  {ja:'裏金（うらがね）',rom:'uragane',en:'Chip breaker (cap iron)',cat:'工具',desc:'二枚カンナに付く逆目防止用の第二の刃。裏金が削り屑を折り曲げ、逆目掘れを防ぐ。現在の平カンナの主流。',ex:'「逆目が出るなら裏金を効かせろ」'},
+  {ja:'胴付ノコ（どうつきのこ）',rom:'dōtsuki-noko',en:'Back saw (dozuki)',cat:'工具',desc:'ノコ身に背金を付けて薄い刃を補強した精密切断用のノコギリ。継手・仕口の胴付き面など、切り口を美しく仕上げたい時に使う。',ex:'「ホゾの肩は胴付ノコで挽け」'},
+  {ja:'ガガリ',rom:'gagari',en:'Rip saw (heavy duty)',cat:'工具',desc:'繊維方向（縦挽き）に大きく切るための片刃ノコギリ。歯が大きく、荒く速く挽ける大工の造作用。',ex:'「太物はガガリで挽いた方が早い」'},
+  {ja:'際カンナ（きわかんな）',rom:'kiwa-kanna',en:'Corner-cutting plane',cat:'工具',desc:'刃が台の際（端）まで付いたカンナ。段差の入隅など普通の平カンナが届かない角を削る専用カンナ。右勝手・左勝手がある。',ex:'「入隅は際カンナで払え」'},
 ];
 
 let dictCat='全て', dictSearch='';
@@ -2686,6 +2893,7 @@ window.addEventListener('DOMContentLoaded', ()=>{
   ssInit();
   initDWStages();
   bbInit();
+  kzInit();
   initDict();
   initCareer();
   initShikaku();
